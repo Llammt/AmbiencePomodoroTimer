@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/startAnimationFragment">
+
+    <fragment
+        android:id="@+id/startAnimationFragment"
+        android:name="com.example.pomodoroasmr.StartAnimationFragment"
+        android:label="fragment_start_animation"
+        tools:layout="@layout/fragment_start_animation" >
+        <action
+            android:id="@+id/action_startAnimationFragment_to_selectSessionFragment"
+            app:destination="@id/selectSessionFragment"
+            app:popUpTo="@id/startAnimationFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/selectSessionFragment"
+        android:name="com.example.pomodoroasmr.SelectSessionFragment"
+        android:label="fragment_select_session"
+        tools:layout="@layout/fragment_select_session" >
+        <action
+            android:id="@+id/action_selectSessionFragment_to_newSessionFragment"
+            app:destination="@id/newSessionFragment" />
+        <action
+            android:id="@+id/action_selectSessionFragment_to_playSessionFragment"
+            app:destination="@id/playSessionFragment" />
+        <action
+            android:id="@+id/action_selectSessionFragment_to_statisticsFragment"
+            app:destination="@id/statisticsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newSessionFragment"
+        android:name="com.example.pomodoroasmr.NewSessionFragment"
+        android:label="fragment_new_session"
+        tools:layout="@layout/fragment_new_session" >
+        <action
+            android:id="@+id/action_newSessionFragment_to_playSessionFragment"
+            app:destination="@id/playSessionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playSessionFragment"
+        android:name="com.example.pomodoroasmr.PlaySessionFragment"
+        android:label="fragment_play_session"
+        tools:layout="@layout/fragment_play_session" />
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.pomodoroasmr.StatisticsFragment"
+        android:label="fragment_statistics"
+        tools:layout="@layout/fragment_statistics" />
+</navigation>

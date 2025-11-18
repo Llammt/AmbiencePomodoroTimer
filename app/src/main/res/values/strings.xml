@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PomodoroASMR</string>
+    <string name="start_animation_fragment">Start animation</string>
+    <string name="select_session_fragment">Select session</string>
+    <string name="new_session_fragment">Create new session</string>
+    <string name="play_session_fragment">Enjoy your work or learning!</string>
+    <string name="statistics_fragment">Statistics: You are awesome!</string>
+</resources>
