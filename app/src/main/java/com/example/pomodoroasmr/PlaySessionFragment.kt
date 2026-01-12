@@ -24,13 +24,25 @@ class PlaySessionFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(TimerViewModel::class.java)
 
+        binding.pauseSessionButton.visibility = View.INVISIBLE
+
 
         binding.startSessionButton.setOnClickListener {
             viewModel.startTimer()
+            binding.startSessionButton.visibility = View.INVISIBLE
+            binding.pauseSessionButton.visibility = View.VISIBLE
         }
 
         binding.stopSessionButton.setOnClickListener {
             viewModel.stopTimer()
+            binding.pauseSessionButton.visibility = View.INVISIBLE
+            binding.startSessionButton.visibility = View.VISIBLE
+        }
+
+        binding.pauseSessionButton.setOnClickListener {
+            viewModel.pauseTimer()
+            binding.pauseSessionButton.visibility = View.INVISIBLE
+            binding.startSessionButton.visibility = View.VISIBLE
         }
 
         return view
