@@ -3,13 +3,12 @@ package com.example.pomodoroasmr
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 
 class TimerViewModel : ViewModel() {
     private var timer: CountDownTimer? = null
     private var isWorkInterval = true
     private var cycleCount = 0
-
-    private var isRunning = false
     private var isFirstStartOfPeriod = true
 
     private var currentPeriodDuration: Long = 0L
@@ -20,13 +19,20 @@ class TimerViewModel : ViewModel() {
     private val oneSecond = 1000L
     private val oneMinute = 60 * oneSecond
 
+    val UIminutes = MutableLiveData<Long>()
+    val UIseconds = MutableLiveData<Long>()
+    val UIPeriodTextLabel = MutableLiveData<String>()
+
+    private val _state = MutableLiveData<TimerState>(TimerState.Idle)
+    val state: MutableLiveData<TimerState> = _state
+
     fun startTimer() {
         if (isFirstStartOfPeriod) {
             currentPeriodDuration = calculatePeriodDuration()
+            UIPeriodTextLabel.value = updatePeriodTextLabel()
             isFirstStartOfPeriod = false
         }
 
-        isRunning = true
         startCountDown()
     }
 
@@ -34,12 +40,7 @@ class TimerViewModel : ViewModel() {
         timer = object : CountDownTimer(currentPeriodDuration, oneSecond) {
 
             override fun onTick(millisUntilFinished: Long) {
-                currentPeriodDuration = millisUntilFinished
-
-                //temp: UI
-                val minutes = (millisUntilFinished / oneMinute)
-                val seconds = (millisUntilFinished / oneSecond) % 60
-                Log.d("Timer: ${ if (isWorkInterval) "Work" else "Chill"}", String.format("%02d:%02d", minutes, seconds))
+                updateUI(millisUntilFinished)
             }
 
             override fun onFinish() {
@@ -60,7 +61,6 @@ class TimerViewModel : ViewModel() {
 
     fun pauseTimer() {
         timer?.cancel()
-        isRunning = false
     }
 
     fun calculatePeriodDuration() : Long =
@@ -70,20 +70,37 @@ class TimerViewModel : ViewModel() {
             else -> shortBreakDuration * oneMinute
         }
 
+    fun updatePeriodTextLabel() : String =
+        when {
+            isWorkInterval -> "Work Interval"
+            isLongBreak() -> "Long Break"
+            else -> "Short Break"
+        }
+
     private fun advanceToNextPeriod() {
         if (isWorkInterval) cycleCount++
         isWorkInterval = !isWorkInterval
-        isRunning = false
         isFirstStartOfPeriod = true
     }
 
     private fun resetState() {
         isWorkInterval = true
         cycleCount = 0
-        isRunning = false
         isFirstStartOfPeriod = true
     }
 
     private fun isLongBreak(): Boolean =
         cycleCount % 4 == 0
+
+    override fun onCleared() {
+        timer?.cancel()
+        timer = null
+        super.onCleared()
+    }
+
+    private fun updateUI(timeUntilFinished : Long) {
+        currentPeriodDuration = timeUntilFinished
+        UIminutes.value = timeUntilFinished / oneMinute
+        UIseconds.value = (timeUntilFinished / oneSecond) % 60
+    }
 }

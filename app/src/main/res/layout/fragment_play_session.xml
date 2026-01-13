@@ -16,13 +16,47 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <TextView
-            android:id="@+id/temp_play_session_text_label"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:id="@+id/UI_minutes_text_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="54sp"
+                android:text="00"/>
+
+            <TextView
+                android:id="@+id/UI_text_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="54sp"
+                android:text=" : "/>
+
+            <TextView
+                android:id="@+id/UI_secundes_text_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="54sp"
+                android:text="00"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/UI_period_text_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:textSize="24sp"
-            android:text="@string/play_session_fragment" />
+            android:text=" "/>
 
         <Space
             android:layout_width="match_parent"

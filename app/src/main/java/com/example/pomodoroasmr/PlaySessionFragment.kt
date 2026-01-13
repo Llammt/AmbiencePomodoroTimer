@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.example.pomodoroasmr.databinding.FragmentPlaySessionBinding
+import androidx.lifecycle.Observer
 
 class PlaySessionFragment : Fragment() {
 
@@ -25,6 +27,18 @@ class PlaySessionFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(TimerViewModel::class.java)
 
         binding.pauseSessionButton.visibility = View.INVISIBLE
+
+        viewModel.UIminutes.observe(viewLifecycleOwner, Observer {newValue ->
+            binding.UIMinutesTextLabel.text = "$newValue"
+        })
+
+        viewModel.UIseconds.observe(viewLifecycleOwner, Observer {newValue ->
+            binding.UISecundesTextLabel.text = "$newValue"
+        })
+
+        viewModel.UIPeriodTextLabel.observe(viewLifecycleOwner, Observer {newValue ->
+            binding.UIPeriodTextLabel.text = "$newValue"
+        })
 
 
         binding.startSessionButton.setOnClickListener {

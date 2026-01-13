@@ -72,6 +72,8 @@ dependencies {
     //livedata
     implementation("androidx.lifecycle:lifecycle-livedata:2.9.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
 }
 
 buildscript {
