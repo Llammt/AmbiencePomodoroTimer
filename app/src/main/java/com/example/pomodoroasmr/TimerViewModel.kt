@@ -2,56 +2,77 @@ package com.example.pomodoroasmr
 
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 
 class TimerViewModel : ViewModel() {
     private var timer: CountDownTimer? = null
-    private var isWorkInterval = true
     private var cycleCount = 0
-    private var isFirstStartOfPeriod = true
-
-    private var currentPeriodDuration: Long = 0L
-    private val workIntervalDuration = 1
-    private val shortBreakDuration = 1
-    private val longBreakDuration = 15
 
     private val oneSecond = 1000L
-    private val oneMinute = 60 * oneSecond
-
-    val UIminutes = MutableLiveData<Long>()
-    val UIseconds = MutableLiveData<Long>()
-    val UIPeriodTextLabel = MutableLiveData<String>()
 
     private val _state = MutableLiveData<TimerState>(TimerState.Idle)
-    val state: MutableLiveData<TimerState> = _state
+    val state: MutableLiveData<TimerState> get() = _state
 
     fun startTimer() {
-        if (isFirstStartOfPeriod) {
-            currentPeriodDuration = calculatePeriodDuration()
-            UIPeriodTextLabel.value = updatePeriodTextLabel()
-            isFirstStartOfPeriod = false
-        }
+        val current = _state.value
 
-        startCountDown()
+        if (current is TimerState.Idle) {
+            val period = TimerState.Period.Work
+            val duration = period.durationMillis
+
+            _state.value = TimerState.Running(
+                period = period,
+                millisLeft = duration
+            )
+
+            startCountDown(duration)
+        } else if (current is TimerState.Paused) {
+            _state.value = TimerState.Running(
+                period = current.period,
+                millisLeft = current.millisLeft
+            )
+
+            startCountDown(current.millisLeft)
+        }
     }
 
-    private fun startCountDown() {
-        timer = object : CountDownTimer(currentPeriodDuration, oneSecond) {
+    private fun startCountDown(duration : Long) {
+        timer?.cancel()
+
+        timer = object : CountDownTimer(duration, oneSecond) {
 
             override fun onTick(millisUntilFinished: Long) {
-                updateUI(millisUntilFinished)
+                val current = _state.value
+
+                if (current is TimerState.Running) {
+                    _state.value = current.copy(
+                        millisLeft = millisUntilFinished
+                    )
+                }
             }
 
             override fun onFinish() {
-                onPeriodFinished()
+                val current = _state.value
+                if (current !is TimerState.Running) return
+
+                onPeriodFinished(current.period)
             }
         }.start()
     }
 
-    private fun onPeriodFinished() {
-        advanceToNextPeriod()
-        startTimer()
+    private fun onPeriodFinished(period: TimerState.Period) {
+        if (period == TimerState.Period.Work) {
+            cycleCount++
+        }
+
+        val next = nextPeriod(period)
+
+        _state.value = TimerState.Running(
+            period = next,
+            millisLeft = next.durationMillis
+        )
+
+        startCountDown(next.durationMillis)
     }
 
     fun stopTimer() {
@@ -60,37 +81,34 @@ class TimerViewModel : ViewModel() {
     }
 
     fun pauseTimer() {
-        timer?.cancel()
+        val current = _state.value
+
+        if (current is TimerState.Running) {
+            timer?.cancel()
+
+            _state.value = TimerState.Paused(
+                period = current.period,
+                millisLeft = current.millisLeft
+            )
+        }
     }
 
-    fun calculatePeriodDuration() : Long =
-         when {
-            isWorkInterval -> workIntervalDuration * oneMinute
-            isLongBreak() -> longBreakDuration * oneMinute
-            else -> shortBreakDuration * oneMinute
-        }
+    fun nextPeriod(period: TimerState.Period): TimerState.Period =
+        when (period) {
+            TimerState.Period.Work ->
+                if ((cycleCount + 1) % 4 == 0)
+                    TimerState.Period.LongBreak
+                else
+                    TimerState.Period.ShortBreak
 
-    fun updatePeriodTextLabel() : String =
-        when {
-            isWorkInterval -> "Work Interval"
-            isLongBreak() -> "Long Break"
-            else -> "Short Break"
+            TimerState.Period.ShortBreak,
+            TimerState.Period.LongBreak ->
+                TimerState.Period.Work
         }
-
-    private fun advanceToNextPeriod() {
-        if (isWorkInterval) cycleCount++
-        isWorkInterval = !isWorkInterval
-        isFirstStartOfPeriod = true
-    }
 
     private fun resetState() {
-        isWorkInterval = true
-        cycleCount = 0
-        isFirstStartOfPeriod = true
+        _state.value = TimerState.Idle
     }
-
-    private fun isLongBreak(): Boolean =
-        cycleCount % 4 == 0
 
     override fun onCleared() {
         timer?.cancel()
@@ -98,9 +116,4 @@ class TimerViewModel : ViewModel() {
         super.onCleared()
     }
 
-    private fun updateUI(timeUntilFinished : Long) {
-        currentPeriodDuration = timeUntilFinished
-        UIminutes.value = timeUntilFinished / oneMinute
-        UIseconds.value = (timeUntilFinished / oneSecond) % 60
-    }
 }

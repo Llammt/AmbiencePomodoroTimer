@@ -41,7 +41,7 @@
                 android:text=" : "/>
 
             <TextView
-                android:id="@+id/UI_secundes_text_label"
+                android:id="@+id/UI_seconds_text_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
