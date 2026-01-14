@@ -74,6 +74,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
+
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }
 
 buildscript {
