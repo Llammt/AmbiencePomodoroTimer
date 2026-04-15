@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/startAnimationFragment"
         android:name="com.example.pomodoroasmr.StartAnimationFragment"
-        android:label="fragment_start_animation"
-        tools:layout="@layout/fragment_start_animation" >
+        android:label="fragment_start_animation" >
         <action
             android:id="@+id/action_startAnimationFragment_to_selectSessionFragment"
             app:destination="@id/selectSessionFragment"
