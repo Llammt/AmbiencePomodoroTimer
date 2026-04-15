@@ -13,14 +13,9 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +28,6 @@ import androidx.navigation.findNavController
 import kotlinx.coroutines.delay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
 
@@ -46,27 +40,15 @@ class StartAnimationFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 PomodoroAppMainTheme {
-                    Surface {
-                        view?.let {StartAnimationFragmentContent(it)}
-                    }
+                    SplashScreen(
+                        onAnimationFinished = {
+                            findNavController()
+                                .navigate(R.id.action_startAnimationFragment_to_selectSessionFragment)
+                        }
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun StartAnimationFragmentContent(view : View) {
-    Column(modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        SplashScreen(
-            onAnimationFinished = {
-                // Этот код выполнится, когда анимация закончится
-                println("Анимация завершена!")
-                view.findNavController()
-                    .navigate(R.id.action_startAnimationFragment_to_selectSessionFragment)
-            }
-        )
     }
 }
 
@@ -76,31 +58,33 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
 
     LaunchedEffect(Unit) {
         visible = true
-        delay(5000) // показываем анимацию 5 секунд
-        onAnimationFinished() // лямбда, которую передаем в параметрах при вызове; конкретно в нашем случае, переходим на главный экран
+        delay(5000)
+        onAnimationFinished()
     }
 
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(
-            animationSpec = tween(2000) // 2 секунды на появление
+            animationSpec = tween(2000)
         ) + scaleIn(
             initialScale = 0.5f,
             animationSpec = tween(2000)
         ),
         exit = fadeOut(
-            animationSpec = tween(2000) //секунда на исчезновение
+            animationSpec = tween(2000)
         )
     ) {
-        // Красивый экран с логотипом
-        Box(  // Контейнер
-            modifier = Modifier.fillMaxSize().background(Color(0xFFAFBEA2)), // Растягивается на весь экран
-            contentAlignment = Alignment.Center  // Всё внутри выравниваем по центру
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
         ) {
-            Image(  // Картинка-логотип
-                painter = painterResource(R.drawable.logo),  // Ресурс из папки res/drawable
-                contentDescription = "Logo",  // Для accessibility (screen reader)
-                modifier = Modifier.size(150.dp) // Ширина и высота 150 dp
+            Image(
+                painter = painterResource(R.drawable.logo),
+                contentDescription = "Logo",
+                modifier = Modifier.size(250.dp)
             )
         }
     }
