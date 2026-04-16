@@ -5,4 +5,7 @@
     <string name="new_session_fragment">Create new session</string>
     <string name="play_session_fragment">Enjoy your work or learning!</string>
     <string name="statistics_fragment">Statistics: You are awesome!</string>
+
+    <string name="select_session_text_label">Select Session</string>
+    <string name="new_session_button_label">Create new session</string>"
 </resources>
