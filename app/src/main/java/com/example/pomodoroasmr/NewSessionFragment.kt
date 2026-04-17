@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.example.pomodoroasmr.databinding.FragmentNewSessionBinding
-import com.example.pomodoroasmr.databinding.FragmentSelectSessionBinding
 
 class NewSessionFragment : Fragment() {
     private var _binding : FragmentNewSessionBinding? = null

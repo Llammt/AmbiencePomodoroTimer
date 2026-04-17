@@ -8,4 +8,6 @@
 
     <string name="select_session_text_label">Select Session</string>
     <string name="new_session_button_label">Create new session</string>"
+    <string name="select_session_button_label">Select session</string>"
+    <string name="statistics_button_label">Show Statistics</string>"
 </resources>

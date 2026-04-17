@@ -18,8 +18,7 @@
     <fragment
         android:id="@+id/selectSessionFragment"
         android:name="com.example.pomodoroasmr.SelectSessionFragment"
-        android:label="fragment_select_session"
-        tools:layout="@layout/fragment_select_session" >
+        android:label="fragment_select_session" >
         <action
             android:id="@+id/action_selectSessionFragment_to_newSessionFragment"
             app:destination="@id/newSessionFragment" />
