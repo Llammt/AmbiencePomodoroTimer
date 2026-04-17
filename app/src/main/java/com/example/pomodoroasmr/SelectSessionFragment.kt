@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -53,19 +54,9 @@ fun SelectSessionScreen(view : View) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Image(
-            painter = painterResource(R.drawable.select_session_header),
-            contentDescription = "Upper corner decorator",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-        )
+        SelectSessionImageHeader()
 
-        Image(
-            painter = painterResource(R.drawable.select_session_footer),
-            contentDescription = "Upper corner decorator",
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        )
+        SelectSessionImageFooter()
 
         Column(
             modifier = Modifier
@@ -75,17 +66,13 @@ fun SelectSessionScreen(view : View) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Text(
-                text = stringResource(R.string.select_session_text_label),
-                fontFamily = FontFamily(Font(R.font.kurale_regular)),
-                fontSize = 24.sp
-            )
+            SelectSessionTextLabel()
 
             NewSessionButton {
                 view.findNavController().navigate(R.id.action_selectSessionFragment_to_newSessionFragment)
             }
 
-            SelectSessionButton {
+            PlaySessionButton {
                 view.findNavController().navigate(R.id.action_selectSessionFragment_to_playSessionFragment)
             }
 
@@ -107,10 +94,10 @@ fun NewSessionButton(clicked : ()-> Unit) {
 }
 
 @Composable
-fun SelectSessionButton(clicked : ()-> Unit) {
+fun PlaySessionButton(clicked : ()-> Unit) {
     Button(onClick = clicked) {
         Text(
-            text = stringResource(R.string.select_session_button_label),
+            text = stringResource(R.string.play_session_button_label),
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp)
     }
@@ -124,4 +111,35 @@ fun StatisticsButton(clicked : ()-> Unit) {
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp)
     }
+}
+
+@Composable
+fun SelectSessionTextLabel() {
+    Text(
+        text = stringResource(R.string.select_session_text_label),
+        fontFamily = FontFamily(Font(R.font.kurale_regular)),
+        fontSize = 24.sp
+    )
+}
+
+@Composable
+fun SelectSessionImageHeader() {
+    Image(
+        painter = painterResource(R.drawable.select_session_header),
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(align = Alignment.TopEnd)
+    )
+}
+
+@Composable
+fun SelectSessionImageFooter() {
+    Image(
+        painter = painterResource(R.drawable.select_session_footer),
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(align = Alignment.BottomCenter)
+    )
 }
