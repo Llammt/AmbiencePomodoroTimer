@@ -3,6 +3,9 @@ package com.example.pomodoroasmr
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class TimerViewModel : ViewModel() {
     private var timer: CountDownTimer? = null
@@ -10,8 +13,8 @@ class TimerViewModel : ViewModel() {
 
     private val oneSecond = 1000L
 
-    private val _state = MutableLiveData<TimerState>(TimerState.Idle)
-    val state: MutableLiveData<TimerState> get() = _state
+    private val _state = MutableStateFlow<TimerState>(TimerState.Idle)
+    val state: StateFlow<TimerState> = _state.asStateFlow()
 
     fun startTimer() {
         val current = _state.value
@@ -26,6 +29,7 @@ class TimerViewModel : ViewModel() {
             )
 
             startCountDown(duration)
+
         } else if (current is TimerState.Paused) {
             _state.value = TimerState.Running(
                 period = current.period,

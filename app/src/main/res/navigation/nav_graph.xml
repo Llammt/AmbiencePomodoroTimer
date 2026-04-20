@@ -41,8 +41,7 @@
     <fragment
         android:id="@+id/playSessionFragment"
         android:name="com.example.pomodoroasmr.PlaySessionFragment"
-        android:label="fragment_play_session"
-        tools:layout="@layout/fragment_play_session" />
+        android:label="fragment_play_session" />
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.pomodoroasmr.StatisticsFragment"
