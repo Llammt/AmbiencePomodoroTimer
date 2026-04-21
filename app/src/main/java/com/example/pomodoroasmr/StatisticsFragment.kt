@@ -5,6 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
+import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
 
 class StatisticsFragment : Fragment() {
 
@@ -12,8 +25,27 @@ class StatisticsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistics, container, false)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                PomodoroAppMainTheme {
+                    StatsScreen()
+                }
+            }
+        }
     }
+}
 
+@Composable
+fun StatsScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Text(text = "Statistics screen",
+            fontFamily = FontFamily(Font(R.font.kurale_regular)),
+            fontSize = 24.sp,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
 }

@@ -5,23 +5,45 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
-import com.example.pomodoroasmr.databinding.FragmentNewSessionBinding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
+import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
 
 class NewSessionFragment : Fragment() {
-    private var _binding : FragmentNewSessionBinding? = null
-    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = FragmentNewSessionBinding.inflate(inflater, container, false)
-        val view = binding.root
-
-        binding.tempNewSessionButton.setOnClickListener() {
-            val action = NewSessionFragmentDirections.actionNewSessionFragmentToPlaySessionFragment()
-            view.findNavController().navigate(action)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                PomodoroAppMainTheme {
+                    NewSessionScreen()
+                }
+            }
         }
+    }
+}
 
-        return view
+@Composable
+fun NewSessionScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Text(text = "New Session Screen",
+            fontFamily = FontFamily(Font(R.font.kurale_regular)),
+            fontSize = 24.sp,
+            modifier = Modifier.align(Alignment.Center)
+            )
     }
 }

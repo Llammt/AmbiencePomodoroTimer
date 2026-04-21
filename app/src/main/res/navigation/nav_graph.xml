@@ -32,8 +32,7 @@
     <fragment
         android:id="@+id/newSessionFragment"
         android:name="com.example.pomodoroasmr.NewSessionFragment"
-        android:label="fragment_new_session"
-        tools:layout="@layout/fragment_new_session" >
+        android:label="fragment_new_session" >
         <action
             android:id="@+id/action_newSessionFragment_to_playSessionFragment"
             app:destination="@id/playSessionFragment" />
@@ -45,6 +44,5 @@
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.pomodoroasmr.StatisticsFragment"
-        android:label="fragment_statistics"
-        tools:layout="@layout/fragment_statistics" />
+        android:label="fragment_statistics" />
 </navigation>

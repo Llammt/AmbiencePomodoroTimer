@@ -8,7 +8,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
@@ -47,14 +49,12 @@ class SelectSessionFragment : Fragment() {
 
 @Composable
 fun SelectSessionScreen(view : View) {
-    Box(
+    BoxWithConstraints (
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
         SelectSessionImageHeader()
-
-        SelectSessionImageFooter()
 
         Column(
             modifier = Modifier
@@ -67,15 +67,18 @@ fun SelectSessionScreen(view : View) {
             SelectSessionTextLabel()
 
             NewSessionButton {
-                view.findNavController().navigate(R.id.action_selectSessionFragment_to_newSessionFragment)
+                view.findNavController()
+                    .navigate(R.id.action_selectSessionFragment_to_newSessionFragment)
             }
 
             PlaySessionButton {
-                view.findNavController().navigate(R.id.action_selectSessionFragment_to_playSessionFragment)
+                view.findNavController()
+                    .navigate(R.id.action_selectSessionFragment_to_playSessionFragment)
             }
 
             StatisticsButton {
-                view.findNavController().navigate(R.id.action_selectSessionFragment_to_statisticsFragment)
+                view.findNavController()
+                    .navigate(R.id.action_selectSessionFragment_to_statisticsFragment)
             }
         }
     }

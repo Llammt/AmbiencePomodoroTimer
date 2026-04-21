@@ -24,7 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -112,7 +112,7 @@ fun RenderTimer(viewModel: TimerViewModel) {
 fun StopSessionButton(clicked : ()-> Unit) {
     Button(onClick = clicked) {
         Text(
-            text = "Stop",
+            text = stringResource(R.string.stop_button_text_label),
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp)
     }
@@ -134,16 +134,17 @@ fun StartPauseSessionButton(
         }
     ) {
 
-        val textStyle = TextStyle(
+        val buttonText = when (timerState) {
+            TimerState.Idle -> stringResource(R.string.start_button_text_label)
+            is TimerState.Running -> stringResource(R.string.pause_button_text_label)
+            is TimerState.Paused -> stringResource(R.string.resume_button_text_label)
+        }
+
+        Text(
+            text = buttonText,
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp
         )
-
-        when (timerState) {
-            TimerState.Idle -> Text("Start", style = textStyle)
-            is TimerState.Running -> Text("Pause", style = textStyle)
-            is TimerState.Paused -> Text("Resume", style = textStyle)
-        }
     }
 }
 
@@ -154,10 +155,11 @@ fun formatTime(millis: Long) : String {
     return "$minutes : $seconds"
 }
 
+@Composable
 fun getSessionStatus(timerState: TimerState) : String {
     return when (timerState) {
-        TimerState.Idle -> "Ready"
-        is TimerState.Running -> "Work"
-        is TimerState.Paused -> "(Paused)"
+        TimerState.Idle -> stringResource(R.string.idle_state_text_label)
+        is TimerState.Running -> stringResource(R.string.work_state_text_label)
+        is TimerState.Paused -> stringResource(R.string.paused_state_text_label)
     }
 }

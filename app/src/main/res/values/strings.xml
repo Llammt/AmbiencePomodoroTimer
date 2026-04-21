@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">PomodoroASMR</string>
-    <string name="start_animation_fragment">Start animation</string>
     <string name="select_session_fragment">Select session</string>
-    <string name="new_session_fragment">Create new session</string>
-    <string name="play_session_fragment">Enjoy your work or learning!</string>
-    <string name="statistics_fragment">Statistics: You are awesome!</string>
 
     <string name="select_session_text_label">Select Session</string>
-    <string name="new_session_button_label">Create new session</string>"
-    <string name="play_session_button_label">Play session</string>"
-    <string name="statistics_button_label">Show Statistics</string>"
+    <string name="new_session_button_label">Create new session</string>
+    <string name="play_session_button_label">Play session</string>
+    <string name="statistics_button_label">Show Statistics</string>
+
+    <string name="start_button_text_label">"Start"</string>
+    <string name="pause_button_text_label">"Pause"</string>
+    <string name="resume_button_text_label">"Resume"</string>
+    <string name="stop_button_text_label">"Stop"</string>
+
+    <string name="idle_state_text_label">"Ready"</string>
+    <string name="work_state_text_label">"Work"</string>
+    <string name="paused_state_text_label">"(Paused)"</string>
 </resources>
