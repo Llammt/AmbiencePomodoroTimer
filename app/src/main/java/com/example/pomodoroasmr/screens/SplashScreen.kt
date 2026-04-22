@@ -1,10 +1,5 @@
-package com.example.pomodoroasmr
+package com.example.pomodoroasmr.screens
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -18,39 +13,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.findNavController
+import com.example.pomodoroasmr.R
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.ComposeView
-import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
-
-class StartAnimationFragment : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                PomodoroAppMainTheme {
-                    SplashScreen(
-                        onAnimationFinished = {
-                            findNavController()
-                                .navigate(R.id.action_startAnimationFragment_to_selectSessionFragment)
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun SplashScreen(onAnimationFinished: () -> Unit) {
@@ -89,5 +61,3 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
         }
     }
 }
-
-
