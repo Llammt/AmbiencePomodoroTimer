@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pomodoroasmr.screens.NewSessionScreen
 import com.example.pomodoroasmr.screens.SelectSessionScreen
 import com.example.pomodoroasmr.screens.SplashScreen
 
@@ -42,11 +43,6 @@ fun AppNavigation() {
             StatisticsScreen()
         }
     }
-}
-
-@Composable
-fun NewSessionScreen() {
-    Text("New Session Screen (TODO)")
 }
 
 @Composable
