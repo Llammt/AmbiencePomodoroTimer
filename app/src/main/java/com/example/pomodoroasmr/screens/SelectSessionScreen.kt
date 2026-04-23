@@ -1,16 +1,10 @@
-package com.example.pomodoroasmr
+package com.example.pomodoroasmr.screens
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
@@ -20,36 +14,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
-
-class SelectSessionFragment : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                PomodoroAppMainTheme {
-                    view?.let {SelectSessionScreen(it)}
-                }
-            }
-        }
-    }
-}
+import androidx.navigation.NavController
+import com.example.pomodoroasmr.R
+import com.example.pomodoroasmr.navigation.Routes
 
 @Composable
-fun SelectSessionScreen(view : View) {
-    BoxWithConstraints (
+fun SelectSessionScreen(navController: NavController) {
+    Box (
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
@@ -67,18 +44,18 @@ fun SelectSessionScreen(view : View) {
             SelectSessionTextLabel()
 
             NewSessionButton {
-                view.findNavController()
-                    .navigate(R.id.action_selectSessionFragment_to_newSessionFragment)
+                navController
+                    .navigate(Routes.NewSession.route)
             }
 
             PlaySessionButton {
-                view.findNavController()
-                    .navigate(R.id.action_selectSessionFragment_to_playSessionFragment)
+                navController
+                    .navigate(Routes.PlaySession.route)
             }
 
             StatisticsButton {
-                view.findNavController()
-                    .navigate(R.id.action_selectSessionFragment_to_statisticsFragment)
+                navController
+                    .navigate(Routes.Statistics.route)
             }
         }
     }
@@ -131,16 +108,5 @@ fun SelectSessionImageHeader() {
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(align = Alignment.TopEnd)
-    )
-}
-
-@Composable
-fun SelectSessionImageFooter() {
-    Image(
-        painter = painterResource(R.drawable.select_session_footer),
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(align = Alignment.BottomCenter)
     )
 }

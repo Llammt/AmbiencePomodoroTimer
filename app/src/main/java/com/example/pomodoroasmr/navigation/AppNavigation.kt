@@ -1,14 +1,11 @@
 package com.example.pomodoroasmr.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pomodoroasmr.screens.SelectSessionScreen
 import com.example.pomodoroasmr.screens.SplashScreen
 
 @Composable
@@ -29,20 +26,35 @@ fun AppNavigation() {
             )
         }
 
-        // Пока заглушка для следующего экрана
-        composable("select_session") {
-            // Позже сюда поставим SelectSessionScreen
-            SelectSessionPlaceholder()
+        composable(Routes.SelectSession.route) {
+            SelectSessionScreen(navController = navController)
+        }
+
+        composable(Routes.NewSession.route) {
+            NewSessionScreen()
+        }
+
+        composable(Routes.PlaySession.route) {
+            PlaySessionScreen()
+        }
+
+        composable(Routes.Statistics.route) {
+            StatisticsScreen()
         }
     }
 }
 
 @Composable
-fun SelectSessionPlaceholder() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Select Session Screen (soon)")
-    }
+fun NewSessionScreen() {
+    Text("New Session Screen (TODO)")
+}
+
+@Composable
+fun PlaySessionScreen() {
+    Text("Play Session Screen (TODO)")
+}
+
+@Composable
+fun StatisticsScreen() {
+    Text("Statistics Screen (TODO)")
 }
