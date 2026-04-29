@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pomodoroasmr.screens.NewSessionScreen
 import com.example.pomodoroasmr.screens.SelectSessionScreen
 import com.example.pomodoroasmr.screens.SplashScreen
+import com.example.pomodoroasmr.screens.StatsScreen
 
 @Composable
 fun AppNavigation() {
@@ -40,7 +41,7 @@ fun AppNavigation() {
         }
 
         composable(Routes.Statistics.route) {
-            StatisticsScreen()
+            StatsScreen()
         }
     }
 }
@@ -48,9 +49,4 @@ fun AppNavigation() {
 @Composable
 fun PlaySessionScreen() {
     Text("Play Session Screen (TODO)")
-}
-
-@Composable
-fun StatisticsScreen() {
-    Text("Statistics Screen (TODO)")
 }
