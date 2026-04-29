@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.Color
 // Определяем цвета
 private val PrimaryGreen = Color(0xFFAFBEA2)   // основной фон
 private val TextDark = Color(0xFF51624F)       // цвет шрифта
+
+private val TextDark2 = Color(0xFF232f21)       // цвет шрифта 2
 private val AccentMint = Color(0xFF9CB4AC)     // акцентный (для кнопок, иконок)
 private val AccentSand = Color(0xFFE6D5A9)     // дополнительный акцент (для выделений)
 
@@ -23,6 +25,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = TextDark,         // цвет текста на secondary
     onBackground = TextDark,        // цвет текста на background
     onSurface = TextDark,           // цвет текста на surface
+    surfaceVariant = TextDark2      //цвет текстовых меток
 )
 
 @Composable

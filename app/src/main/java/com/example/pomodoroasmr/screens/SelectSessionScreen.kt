@@ -96,7 +96,8 @@ fun SelectSessionTextLabel() {
     Text(
         text = stringResource(R.string.select_session_text_label),
         fontFamily = FontFamily(Font(R.font.kurale_regular)),
-        fontSize = 24.sp
+        fontSize = 24.sp,
+        color = MaterialTheme.colorScheme.surfaceVariant
     )
 }
 
