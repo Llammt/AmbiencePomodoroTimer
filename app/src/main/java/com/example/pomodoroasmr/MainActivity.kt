@@ -12,6 +12,7 @@ import com.example.pomodoroasmr.ui.PomodoroAppMainTheme
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             PomodoroAppMainTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {

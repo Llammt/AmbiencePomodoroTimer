@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -29,6 +30,7 @@ import androidx.navigation.NavController
 import com.example.pomodoroasmr.R
 import com.example.pomodoroasmr.TimerState
 import com.example.pomodoroasmr.TimerViewModel
+import com.example.pomodoroasmr.audio.AudioPlayer
 
 @Composable
 fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
@@ -41,6 +43,12 @@ fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
     }
 
     val formattedTime = formatTime(millisLeft)
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        val audioPlayer = AudioPlayer(context)
+        viewModel.setAudioPlayer(audioPlayer)
+    }
 
     Box(
         modifier = Modifier
@@ -138,7 +146,14 @@ fun formatTime(millis: Long) : String {
 fun getSessionStatus(timerState: TimerState) : String {
     return when (timerState) {
         TimerState.Idle -> stringResource(R.string.idle_state_text_label)
-        is TimerState.Running -> stringResource(R.string.work_state_text_label)
+        is TimerState.Running -> {
+            val period = timerState.period
+            when (period) {
+                TimerState.Period.LongBreak -> stringResource(R.string.long_break_state_text_label)
+                TimerState.Period.ShortBreak -> stringResource(R.string.short_break_state_text_label)
+                TimerState.Period.Work -> stringResource(R.string.work_state_text_label)
+            }
+        }
         is TimerState.Paused -> stringResource(R.string.paused_state_text_label)
     }
 }

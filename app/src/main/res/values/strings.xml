@@ -14,5 +14,7 @@
 
     <string name="idle_state_text_label">"Ready"</string>
     <string name="work_state_text_label">"Work"</string>
+    <string name="short_break_state_text_label">"Short Break"</string>
+    <string name="long_break_state_text_label">"Long Break"</string>
     <string name="paused_state_text_label">"(Paused)"</string>
 </resources>

@@ -21,8 +21,8 @@ sealed class TimerState {
         companion object {
             const val ONE_MINUTE = 60_000L
         }
-        object Work : Period(25 * ONE_MINUTE, "Work")
-        object ShortBreak : Period(5 * ONE_MINUTE, "Short Break")
-        object LongBreak : Period(15 * ONE_MINUTE, "Long Break")
+        object Work : Period(1 * ONE_MINUTE, "Work")
+        object ShortBreak : Period(1 * ONE_MINUTE, "Short Break")
+        object LongBreak : Period(1 * ONE_MINUTE, "Long Break")
     }
 }

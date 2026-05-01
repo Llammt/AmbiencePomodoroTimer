@@ -1,8 +1,11 @@
 package com.example.pomodoroasmr
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.CountDownTimer
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData
+import com.example.pomodoroasmr.audio.AudioPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,6 +18,12 @@ class TimerViewModel : ViewModel() {
 
     private val _state = MutableStateFlow<TimerState>(TimerState.Idle)
     val state: StateFlow<TimerState> = _state.asStateFlow()
+
+    private var audioPlayer: AudioPlayer? = null
+
+    fun setAudioPlayer(player: AudioPlayer) {
+        this.audioPlayer = player
+    }
 
     fun startTimer() {
         val current = _state.value
@@ -77,6 +86,8 @@ class TimerViewModel : ViewModel() {
         )
 
         startCountDown(next.durationMillis)
+
+        audioPlayer?.playSessionBasicEndSound()
     }
 
     fun stopTimer() {
@@ -117,6 +128,7 @@ class TimerViewModel : ViewModel() {
     override fun onCleared() {
         timer?.cancel()
         timer = null
+        audioPlayer?.stop()
         super.onCleared()
     }
 
