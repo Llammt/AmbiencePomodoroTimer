@@ -1,16 +1,17 @@
-package com.example.pomodoroasmr
+package com.example.pomodoroasmr.timer
 
-import android.content.Context
-import android.media.MediaPlayer
 import android.os.CountDownTimer
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.pomodoroasmr.audio.AudioPlayer
+import com.example.pomodoroasmr.data.SessionRecord
+import com.example.pomodoroasmr.data.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class TimerViewModel : ViewModel() {
+class TimerViewModel(private val repository : SessionRepository) : ViewModel() {
     private var timer: CountDownTimer? = null
     private var cycleCount = 0
 
@@ -76,6 +77,14 @@ class TimerViewModel : ViewModel() {
     private fun onPeriodFinished(period: TimerState.Period) {
         if (period == TimerState.Period.Work) {
             cycleCount++
+
+            viewModelScope.launch {
+                val record = SessionRecord(
+                    date = System.currentTimeMillis(),
+                    workDuration = period.durationMillis
+                )
+                repository.insert(record)
+            }
         }
 
         val next = nextPeriod(period)
@@ -131,5 +140,4 @@ class TimerViewModel : ViewModel() {
         audioPlayer?.stop()
         super.onCleared()
     }
-
 }

@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pomodoroasmr.R
-import com.example.pomodoroasmr.TimerState
-import com.example.pomodoroasmr.TimerViewModel
+import com.example.pomodoroasmr.timer.TimerState
+import com.example.pomodoroasmr.timer.TimerViewModel
 import com.example.pomodoroasmr.audio.AudioPlayer
 
 @Composable

@@ -1,5 +1,7 @@
 package com.example.pomodoroasmr
 
+import com.example.pomodoroasmr.timer.TimerState
+import com.example.pomodoroasmr.timer.TimerViewModel
 import org.junit.Assert.*
 import org.junit.Test
 

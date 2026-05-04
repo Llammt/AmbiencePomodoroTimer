@@ -4,6 +4,8 @@ plugins {
     kotlin("plugin.serialization") version "2.0.21"
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.compose")
+    //kapt
+    id("kotlin-kapt")
 }
 
 android {
@@ -96,6 +98,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     implementation("androidx.navigation:navigation-compose:2.8.9")
+
+    //Room
+    val room_version = "2.8.4"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    //kapt
+    kapt("androidx.room:room-compiler:$room_version")
 }
 
 buildscript {

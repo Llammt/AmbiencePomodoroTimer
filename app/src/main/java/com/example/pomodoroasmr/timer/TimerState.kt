@@ -1,4 +1,4 @@
-package com.example.pomodoroasmr
+package com.example.pomodoroasmr.timer
 
 sealed class TimerState {
 
