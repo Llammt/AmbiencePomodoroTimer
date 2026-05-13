@@ -17,4 +17,16 @@
     <string name="short_break_state_text_label">"Short Break"</string>
     <string name="long_break_state_text_label">"Long Break"</string>
     <string name="paused_state_text_label">"(Paused)"</string>
+
+    <string-array name="week_days">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+    <string name="work_time_daily">Daily focus time: %s</string>
+    <string name="work_time_total">Total focus time: %s</string>
 </resources>
