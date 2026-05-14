@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class TimerViewModel(private val repository : SessionRepository) : ViewModel() {
     private var timer: CountDownTimer? = null
@@ -80,7 +81,7 @@ class TimerViewModel(private val repository : SessionRepository) : ViewModel() {
 
             viewModelScope.launch {
                 val record = SessionRecord(
-                    date = System.currentTimeMillis(),
+                    date = LocalDate.now().toString(),
                     workDuration = period.durationMillis
                 )
                 repository.insert(record)

@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 class SessionRecord (
     @PrimaryKey(autoGenerate = true)
     val id : Long = 0,
-    val date : Long,
+    val date : String,
     val workDuration : Long
 )

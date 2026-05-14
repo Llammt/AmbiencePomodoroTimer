@@ -45,6 +45,7 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
     val totalDuration by viewModel.totalWorkDuration.collectAsState()
+    val dailyDuration by viewModel.dailyWorkDuration.collectAsState()
 
     Column(
         modifier = Modifier
@@ -65,7 +66,7 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        StatisticsSummary(totalDuration = totalDuration,kuraleFont)
+        StatisticsSummary(totalDuration = totalDuration, dailyDuration = dailyDuration, kuraleFont)
     }
 }
 
@@ -143,12 +144,12 @@ fun DayCell(day: String, fontFamily: FontFamily) {
 }
 
 @Composable
-fun StatisticsSummary(totalDuration: String, fontFamily: FontFamily) {
+fun StatisticsSummary(totalDuration: String, dailyDuration: String, fontFamily: FontFamily) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = stringResource(R.string.work_time_daily, "TODO"),
+            text = stringResource(R.string.work_time_daily, dailyDuration),
             style = MaterialTheme.typography.bodyLarge,
             fontFamily = fontFamily
         )

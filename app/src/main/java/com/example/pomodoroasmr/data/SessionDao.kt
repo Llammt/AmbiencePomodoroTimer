@@ -12,4 +12,7 @@ interface SessionDao {
 
     @Query("SELECT SUM(workDuration) FROM session_records")
         fun getTotalWorkDuration(): Flow<Long?>
+
+    @Query("SELECT SUM(workDuration) FROM session_records WHERE date = :formattedDate")
+    fun getWorkDurationForDate(formattedDate: String): Flow<Long?>
 }

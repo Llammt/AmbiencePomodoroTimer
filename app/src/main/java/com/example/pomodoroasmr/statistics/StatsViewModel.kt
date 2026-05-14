@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.time.LocalDate
 
 class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
 
@@ -15,6 +16,14 @@ class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
         .map { duration ->
             formatDuration(duration ?: 0L)
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "0 min"
+        )
+
+    val dailyWorkDuration: StateFlow<String> = repository.getTodaysWorkDuration()
+        .map { duration -> formatDuration(duration ?: 0L) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
