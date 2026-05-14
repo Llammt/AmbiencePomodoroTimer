@@ -1,6 +1,7 @@
 package com.example.pomodoroasmr.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -44,8 +48,11 @@ import java.util.Locale
 fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
+    val selectedDate by viewModel.selectedDate.collectAsState()
     val totalDuration by viewModel.totalWorkDuration.collectAsState()
     val dailyDuration by viewModel.dailyWorkDuration.collectAsState()
+
+    val currentMonth = remember{YearMonth.now()}
 
     Column(
         modifier = Modifier
@@ -55,7 +62,12 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        CalendarSection(kuraleFont)
+        CalendarSection(kuraleFont,
+            selectedDate = selectedDate,
+            onDayClick = { day ->
+            val formattedDate = "%s-%02d".format(currentMonth.toString(), day.toInt())
+                viewModel.onDateSelected(formattedDate)
+        })
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -86,13 +98,13 @@ fun createCalendarState(month: YearMonth, locale: Locale = Locale.getDefault()):
 }
 
 @Composable
-fun CalendarSection(fontFamily: FontFamily) {
+fun CalendarSection(fontFamily: FontFamily, selectedDate: String, onDayClick: (String) -> Unit) {
     val state = remember { createCalendarState(YearMonth.now()) }
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         CalendarHeader(state.title, fontFamily)
-        CalendarGrid(state.days, fontFamily)
+        CalendarGrid(state.days, fontFamily, selectedDate, onDayClick)
     }
 }
 
@@ -107,15 +119,22 @@ fun CalendarHeader(title: String, fontFamily: FontFamily) {
 }
 
 @Composable
-fun CalendarGrid(days: List<String>, fontFamily: FontFamily) {
+fun CalendarGrid(days: List<String>, fontFamily: FontFamily, selectedDate: String, onDayClick: (String) -> Unit) {
     val weekdays = stringArrayResource(id = R.array.week_days)
+    val selectedDayOnly = selectedDate.split("-").last().toIntOrNull()?.toString() ?: ""
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(weekdays) { DayOfWeekLabel(it, fontFamily) }
-        items(days) { DayCell(it, fontFamily) }
+        items(days) { day ->
+            DayCell(
+                day = day,
+                fontFamily = fontFamily,
+                isSelected = (day == selectedDayOnly && day.isNotEmpty()),
+                { clickedDay -> onDayClick(clickedDay) })
+        }
     }
 }
 
@@ -130,15 +149,18 @@ fun DayOfWeekLabel(day: String, fontFamily: FontFamily) {
 }
 
 @Composable
-fun DayCell(day: String, fontFamily: FontFamily) {
+fun DayCell(day: String, fontFamily: FontFamily, isSelected : Boolean, onClick : (String) -> Unit) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(4.dp),
+            .padding(4.dp)
+            .clip(CircleShape)
+            .background(if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Transparent)
+            .clickable(enabled = day.isNotEmpty()) { onClick(day) },
         contentAlignment = Alignment.Center
     ) {
         if (day.isNotEmpty()) {
-            Text(text = day, fontFamily = fontFamily)
+            Text(text = day, fontFamily = fontFamily, color = if(isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Unspecified)
         }
     }
 }

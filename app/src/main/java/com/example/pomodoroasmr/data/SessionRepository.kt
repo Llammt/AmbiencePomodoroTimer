@@ -12,5 +12,5 @@ class SessionRepository(private val dao: SessionDao) {
 
     fun getTotalWorkDuration() : Flow<Long?> = dao.getTotalWorkDuration()
 
-    fun getTodaysWorkDuration() : Flow<Long?> = dao.getWorkDurationForDate(LocalDate.now().toString())
+    fun getDailyWorkDuration(date : String) : Flow<Long?> = dao.getWorkDurationForDate(date)
 }
