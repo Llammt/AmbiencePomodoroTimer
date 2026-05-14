@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,11 +54,12 @@ import java.util.Locale
 fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
+    val viewedMonth by viewModel.viewedMonth.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
     val totalDuration by viewModel.totalWorkDuration.collectAsState()
     val dailyDuration by viewModel.dailyWorkDuration.collectAsState()
 
-    val currentMonth = remember{YearMonth.now()}
+    val calendarState = remember(viewedMonth) { createCalendarState(viewedMonth)}
 
     Column(
         modifier = Modifier
@@ -62,12 +69,17 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        CalendarSection(kuraleFont,
+        CalendarSection(
+            calendarState = calendarState,
+            fontFamily = kuraleFont,
             selectedDate = selectedDate,
             onDayClick = { day ->
-            val formattedDate = "%s-%02d".format(currentMonth.toString(), day.toInt())
+                val formattedDate = "%s-%02d".format(viewedMonth.toString(), day.toInt())
                 viewModel.onDateSelected(formattedDate)
-        })
+            },
+            onPrevClick = { viewModel.prevMonth() },
+            onNextClick = { viewModel.nextMonth() }
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -90,32 +102,65 @@ data class CalendarUiState(
 fun createCalendarState(month: YearMonth, locale: Locale = Locale.getDefault()): CalendarUiState {
     val title = "${month.month.getDisplayName(TextStyle.FULL, locale)} ${month.year}"
     val daysInMonth = month.lengthOfMonth()
-    val firstDayOfMonth = month.atDay(1).dayOfWeek.value
 
+    val firstDayOfMonth = month.atDay(1).dayOfWeek.value
     val days = (1 until firstDayOfMonth).map { "" } + (1..daysInMonth).map { it.toString() }
 
     return CalendarUiState(title, days)
 }
 
 @Composable
-fun CalendarSection(fontFamily: FontFamily, selectedDate: String, onDayClick: (String) -> Unit) {
+fun CalendarSection(calendarState: CalendarUiState, // Передаем состояние снаружи
+                    fontFamily: FontFamily,
+                    selectedDate: String,
+                    onDayClick: (String) -> Unit,
+                    onPrevClick: () -> Unit, // События листания
+                    onNextClick: () -> Unit) {
     val state = remember { createCalendarState(YearMonth.now()) }
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        CalendarHeader(state.title, fontFamily)
-        CalendarGrid(state.days, fontFamily, selectedDate, onDayClick)
+        CalendarHeader(
+            title = calendarState.title, // Берем из стейта
+            fontFamily = fontFamily,
+            onPrevClick = onPrevClick,
+            onNextClick = onNextClick
+        )
+        CalendarGrid(
+            days = calendarState.days, // Берем из стейта
+            fontFamily = fontFamily,
+            selectedDate = selectedDate,
+            onDayClick = onDayClick
+        )
     }
 }
 
 @Composable
-fun CalendarHeader(title: String, fontFamily: FontFamily) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(bottom = 16.dp),
-        fontFamily = fontFamily
-    )
+fun CalendarHeader(
+    title: String,
+    fontFamily: FontFamily,
+    onPrevClick: () -> Unit,
+    onNextClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = onPrevClick) {
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous")
+        }
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontFamily = fontFamily
+        )
+
+        IconButton(onClick = onNextClick) {
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next")
+        }
+    }
 }
 
 @Composable

@@ -12,19 +12,21 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
+import java.time.YearMonth
 
 class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
-    // 1. Храним выбранную дату (строкой "yyyy-MM-dd")
+    private val _viewedMonth = MutableStateFlow(YearMonth.now())
+    val viewedMonth: StateFlow<YearMonth> = _viewedMonth
+
+    fun nextMonth() { _viewedMonth.value = _viewedMonth.value.plusMonths(1) }
+    fun prevMonth() { _viewedMonth.value = _viewedMonth.value.minusMonths(1) }
     private val _selectedDate = MutableStateFlow(LocalDate.now().toString())
     val selectedDate: StateFlow<String> = _selectedDate
 
-    // 2. Метод для смены даты
     fun onDateSelected(date: String) {
         _selectedDate.value = date
     }
 
-    // 3. "Магия": связываем дату и запрос к БД
-    // flatMapLatest значит: "как только изменится дата, отпишись от старого запроса и начни новый"
     @OptIn(ExperimentalCoroutinesApi::class)
     val dailyWorkDuration: StateFlow<String> = _selectedDate
         .flatMapLatest { date ->
@@ -46,14 +48,6 @@ class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = "0 min"
         )
-
-//    val dailyWorkDuration: StateFlow<String> = repository.getDailyWorkDuration()
-//        .map { duration -> formatDuration(duration ?: 0L) }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5000),
-//            initialValue = "0 min"
-//        )
 
     private fun formatDuration(millis: Long): String {
         val minutes = (millis / (1000 * 60)) % 60
