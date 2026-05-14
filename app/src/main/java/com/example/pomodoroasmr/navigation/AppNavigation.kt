@@ -1,6 +1,5 @@
 package com.example.pomodoroasmr.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,7 +14,8 @@ import com.example.pomodoroasmr.screens.PlaySessionScreen
 import com.example.pomodoroasmr.screens.SelectSessionScreen
 import com.example.pomodoroasmr.screens.SplashScreen
 import com.example.pomodoroasmr.screens.StatsScreen
-import com.example.pomodoroasmr.timer.TimerViewModelFactory
+import com.example.pomodoroasmr.di.AppViewModelFactory
+import com.example.pomodoroasmr.statistics.StatsViewModel
 
 @Composable
 fun AppNavigation() {
@@ -44,7 +44,7 @@ fun AppNavigation() {
         }
 
         composable(Routes.PlaySession.route) {
-            val factory = TimerViewModelFactory(
+            val factory = AppViewModelFactory(
                 SessionRepository(AppDatabase.getInstance(LocalContext.current).sessionDao())
             )
             val viewModel: TimerViewModel = viewModel(factory = factory)
@@ -52,7 +52,11 @@ fun AppNavigation() {
         }
 
         composable(Routes.Statistics.route) {
-            StatsScreen()
+            val factory = AppViewModelFactory(
+                SessionRepository(AppDatabase.getInstance(LocalContext.current).sessionDao())
+            )
+            val viewModel: StatsViewModel = viewModel(factory = factory)
+            StatsScreen(viewModel)
         }
     }
 }

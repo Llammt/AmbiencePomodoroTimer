@@ -17,6 +17,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +30,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pomodoroasmr.R
+import com.example.pomodoroasmr.di.AppViewModelFactory
+import com.example.pomodoroasmr.statistics.StatsViewModel
+import com.example.pomodoroasmr.timer.TimerViewModel
 import java.time.YearMonth
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun StatsScreen() {
+fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
     val kuraleFont = FontFamily(Font(R.font.kurale_regular))
+
+    val totalDuration by viewModel.totalWorkDuration.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,7 +65,7 @@ fun StatsScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        StatisticsSummary(kuraleFont)
+        StatisticsSummary(totalDuration = totalDuration,kuraleFont)
     }
 }
 
@@ -135,7 +143,7 @@ fun DayCell(day: String, fontFamily: FontFamily) {
 }
 
 @Composable
-fun StatisticsSummary(fontFamily: FontFamily) {
+fun StatisticsSummary(totalDuration: String, fontFamily: FontFamily) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -145,7 +153,7 @@ fun StatisticsSummary(fontFamily: FontFamily) {
             fontFamily = fontFamily
         )
         Text(
-            text = stringResource(R.string.work_time_total, "TODO"),
+            text = stringResource(R.string.work_time_total, totalDuration),
             style = MaterialTheme.typography.bodyLarge,
             fontFamily = fontFamily
         )
