@@ -8,7 +8,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
@@ -28,9 +30,22 @@ class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val dailyWorkDuration: StateFlow<String> = _selectedDate
-        .flatMapLatest { date ->
-            repository.getDailyWorkDuration(date)
+    val dailyWorkDuration: StateFlow<String> = combine(_selectedDate, _viewedMonth) { selectedDateStr, viewedMonth ->
+        val selectedDate = LocalDate.parse(selectedDateStr)
+        val today = LocalDate.now()
+
+        val isCorrectMonth = YearMonth.from(selectedDate) == viewedMonth
+
+        val isFutureDate = selectedDate.isAfter(today)
+
+        Triple(selectedDateStr, isCorrectMonth, isFutureDate)
+    }
+        .flatMapLatest { (dateStr, isCorrectMonth, isFutureDate) ->
+            if (!isCorrectMonth || isFutureDate) {
+                flowOf(0L)
+            } else {
+                repository.getDailyWorkDuration(dateStr)
+            }
         }
         .map { duration -> formatDuration(duration ?: 0L) }
         .stateIn(

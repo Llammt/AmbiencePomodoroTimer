@@ -73,6 +73,7 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
             calendarState = calendarState,
             fontFamily = kuraleFont,
             selectedDate = selectedDate,
+            viewedMonth = viewedMonth,
             onDayClick = { day ->
                 val formattedDate = "%s-%02d".format(viewedMonth.toString(), day.toInt())
                 viewModel.onDateSelected(formattedDate)
@@ -110,26 +111,26 @@ fun createCalendarState(month: YearMonth, locale: Locale = Locale.getDefault()):
 }
 
 @Composable
-fun CalendarSection(calendarState: CalendarUiState, // Передаем состояние снаружи
+fun CalendarSection(calendarState: CalendarUiState,
                     fontFamily: FontFamily,
                     selectedDate: String,
                     onDayClick: (String) -> Unit,
-                    onPrevClick: () -> Unit, // События листания
+                    viewedMonth: YearMonth,
+                    onPrevClick: () -> Unit,
                     onNextClick: () -> Unit) {
-    val state = remember { createCalendarState(YearMonth.now()) }
-    val kuraleFont = FontFamily(Font(R.font.kurale_regular))
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         CalendarHeader(
-            title = calendarState.title, // Берем из стейта
+            title = calendarState.title,
             fontFamily = fontFamily,
             onPrevClick = onPrevClick,
             onNextClick = onNextClick
         )
         CalendarGrid(
-            days = calendarState.days, // Берем из стейта
+            days = calendarState.days,
             fontFamily = fontFamily,
             selectedDate = selectedDate,
+            viewedMonth = viewedMonth,
             onDayClick = onDayClick
         )
     }
@@ -164,9 +165,14 @@ fun CalendarHeader(
 }
 
 @Composable
-fun CalendarGrid(days: List<String>, fontFamily: FontFamily, selectedDate: String, onDayClick: (String) -> Unit) {
+fun CalendarGrid(days: List<String>,
+                 fontFamily: FontFamily,
+                 selectedDate: String,
+                 viewedMonth: YearMonth,
+                 onDayClick: (String) -> Unit) {
     val weekdays = stringArrayResource(id = R.array.week_days)
-    val selectedDayOnly = selectedDate.split("-").last().toIntOrNull()?.toString() ?: ""
+    val parsedSelectedDate = LocalDate.parse(selectedDate)
+    val isCurrentMonthViewed = YearMonth.from(parsedSelectedDate) == viewedMonth
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
@@ -177,8 +183,9 @@ fun CalendarGrid(days: List<String>, fontFamily: FontFamily, selectedDate: Strin
             DayCell(
                 day = day,
                 fontFamily = fontFamily,
-                isSelected = (day == selectedDayOnly && day.isNotEmpty()),
-                { clickedDay -> onDayClick(clickedDay) })
+                isSelected = (isCurrentMonthViewed && day == parsedSelectedDate.dayOfMonth.toString() && day.isNotEmpty()),
+                onClick = { clickedDay -> onDayClick(clickedDay) }
+            )
         }
     }
 }
