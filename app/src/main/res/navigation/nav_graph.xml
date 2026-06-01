@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startAnimationFragment"
-        android:name="com.example.pomodoroasmr.StartAnimationFragment"
+        android:name="com.ficusflower.pomodoroasmr.StartAnimationFragment"
         android:label="fragment_start_animation" >
         <action
             android:id="@+id/action_startAnimationFragment_to_selectSessionFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/selectSessionFragment"
-        android:name="com.example.pomodoroasmr.SelectSessionFragment"
+        android:name="com.ficusflower.pomodoroasmr.SelectSessionFragment"
         android:label="fragment_select_session" >
         <action
             android:id="@+id/action_selectSessionFragment_to_newSessionFragment"
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/newSessionFragment"
-        android:name="com.example.pomodoroasmr.NewSessionFragment"
+        android:name="com.ficusflower.pomodoroasmr.NewSessionFragment"
         android:label="fragment_new_session" >
         <action
             android:id="@+id/action_newSessionFragment_to_playSessionFragment"
@@ -39,10 +39,10 @@
     </fragment>
     <fragment
         android:id="@+id/playSessionFragment"
-        android:name="com.example.pomodoroasmr.PlaySessionFragment"
+        android:name="com.ficusflower.pomodoroasmr.PlaySessionFragment"
         android:label="fragment_play_session" />
     <fragment
         android:id="@+id/statisticsFragment"
-        android:name="com.example.pomodoroasmr.StatisticsFragment"
+        android:name="com.ficusflower.pomodoroasmr.StatisticsFragment"
         android:label="fragment_statistics" />
 </navigation>

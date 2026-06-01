@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pomodoroasmr"
+    namespace = "com.ficusflower.pomodoroasmr"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.pomodoroasmr"
+        applicationId = "com.ficusflower.pomodoroasmr"
         minSdk = 27
         targetSdk = 36
         versionCode = 1
@@ -108,6 +108,11 @@ dependencies {
 
     //kapt
     kapt("androidx.room:room-compiler:$room_version")
+
+    // Сама библиотека Koin для Android
+    implementation("io.insert-koin:koin-android:4.2.1") // версию можно взять посвежее
+// Поддержка Jetpack Compose
+    implementation("io.insert-koin:koin-androidx-compose:4.2.1")
 }
 
 buildscript {
