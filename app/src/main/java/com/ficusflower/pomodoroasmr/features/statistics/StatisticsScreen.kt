@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.features.screens
+package com.ficusflower.pomodoroasmr.features.statistics
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.features.statistics.StatsViewModel
 import java.time.YearMonth
 import java.time.LocalDate
 import java.time.format.TextStyle

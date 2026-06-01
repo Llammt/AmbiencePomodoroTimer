@@ -1,19 +1,15 @@
 package com.ficusflower.pomodoroasmr.infrastructure.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ficusflower.pomodoroasmr.domain.timer.TimerViewModel
-import com.ficusflower.pomodoroasmr.data.database.AppDatabase
-import com.ficusflower.pomodoroasmr.features.screens.NewSessionScreen
-import com.ficusflower.pomodoroasmr.features.screens.PlaySessionScreen
-import com.ficusflower.pomodoroasmr.features.screens.SelectSessionScreen
-import com.ficusflower.pomodoroasmr.features.screens.SplashScreen
-import com.ficusflower.pomodoroasmr.features.screens.StatsScreen
-import com.ficusflower.pomodoroasmr.infrastructure.di.AppViewModelFactory
+import com.ficusflower.pomodoroasmr.features.pomodoro.TimerViewModel
+import com.ficusflower.pomodoroasmr.features.main.MainMenuScreen
+import com.ficusflower.pomodoroasmr.features.pomodoro.NewSessionScreen
+import com.ficusflower.pomodoroasmr.features.pomodoro.PlaySessionScreen
+import com.ficusflower.pomodoroasmr.features.main.SplashScreen
+import com.ficusflower.pomodoroasmr.features.statistics.StatsScreen
 import com.ficusflower.pomodoroasmr.features.statistics.StatsViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -36,7 +32,7 @@ fun AppNavigation() {
         }
 
         composable(Routes.SelectSession.route) {
-            SelectSessionScreen(navController = navController)
+            MainMenuScreen(navController = navController)
         }
 
         composable(Routes.NewSession.route) {

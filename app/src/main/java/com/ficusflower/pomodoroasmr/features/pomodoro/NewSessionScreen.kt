@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.features.screens
+package com.ficusflower.pomodoroasmr.features.pomodoro
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

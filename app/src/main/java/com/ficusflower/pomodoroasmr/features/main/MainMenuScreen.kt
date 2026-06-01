@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.features.screens
+package com.ficusflower.pomodoroasmr.features.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import com.ficusflower.pomodoroasmr.R
 import com.ficusflower.pomodoroasmr.infrastructure.navigation.Routes
 
 @Composable
-fun SelectSessionScreen(navController: NavController) {
+fun MainMenuScreen(navController: NavController) {
     Box (
         modifier = Modifier
             .fillMaxSize()

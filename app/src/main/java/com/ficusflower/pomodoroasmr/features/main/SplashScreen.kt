@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.features.screens
+package com.ficusflower.pomodoroasmr.features.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween

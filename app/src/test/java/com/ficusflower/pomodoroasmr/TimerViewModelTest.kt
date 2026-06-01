@@ -1,7 +1,7 @@
 package com.ficusflower.pomodoroasmr
 
-import com.ficusflower.pomodoroasmr.domain.timer.TimerState
-import com.ficusflower.pomodoroasmr.domain.timer.TimerViewModel
+import com.ficusflower.pomodoroasmr.features.pomodoro.TimerState
+import com.ficusflower.pomodoroasmr.features.pomodoro.TimerViewModel
 import org.junit.Assert.*
 import org.junit.Test
 

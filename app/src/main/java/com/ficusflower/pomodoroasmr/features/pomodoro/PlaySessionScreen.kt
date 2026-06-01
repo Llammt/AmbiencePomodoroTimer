@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.features.screens
+package com.ficusflower.pomodoroasmr.features.pomodoro
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.domain.timer.TimerState
-import com.ficusflower.pomodoroasmr.domain.timer.TimerViewModel
 import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
     val timerState by viewModel.state.collectAsState()
+    val viewModel: TimerViewModel = koinViewModel()
 
     val millisLeft = when (timerState) {
         TimerState.Idle -> 0L
@@ -47,7 +47,6 @@ fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         val audioPlayer = AudioPlayer(context)
-        viewModel.setAudioPlayer(audioPlayer)
     }
 
     Box(

@@ -1,4 +1,4 @@
-package com.ficusflower.pomodoroasmr.domain.timer
+package com.ficusflower.pomodoroasmr.features.pomodoro
 
 sealed class TimerState {
 
