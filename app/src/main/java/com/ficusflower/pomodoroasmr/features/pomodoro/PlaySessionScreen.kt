@@ -2,24 +2,13 @@ package com.ficusflower.pomodoroasmr.features.pomodoro
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -28,33 +17,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroPeriod
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
+fun PlaySessionScreen(
+    navController: NavController,
+    viewModel: TimerViewModel = koinViewModel()
+) {
     val timerState by viewModel.state.collectAsState()
-    val viewModel: TimerViewModel = koinViewModel()
-
-    val millisLeft = when (timerState) {
-        TimerState.Idle -> 0L
-        is TimerState.Running -> (timerState as TimerState.Running).millisLeft
-        is TimerState.Paused -> (timerState as TimerState.Paused).millisLeft
-    }
-
-    val formattedTime = formatTime(millisLeft)
-
-    val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        val audioPlayer = AudioPlayer(context)
-    }
+    val formattedTime = formatTime(timerState.millisLeft)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         Column(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -78,7 +58,6 @@ fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 StartPauseSessionButton(
                     timerState = timerState,
                     onStart = { viewModel.startTimer() },
@@ -95,35 +74,35 @@ fun PlaySessionScreen(viewModel: TimerViewModel, navController: NavController) {
 }
 
 @Composable
-fun StopSessionButton(clicked : ()-> Unit) {
+fun StopSessionButton(clicked: () -> Unit) {
     Button(onClick = clicked) {
         Text(
             text = stringResource(R.string.stop_button_text_label),
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
-            fontSize = 24.sp)
+            fontSize = 24.sp
+        )
     }
 }
 
 @Composable
 fun StartPauseSessionButton(
-    timerState: TimerState,
+    timerState: PomodoroEngineState,
     onStart: () -> Unit,
     onPause: () -> Unit
 ) {
     Button(
         onClick = {
-            when (timerState) {
-                TimerState.Idle -> onStart()
-                is TimerState.Running -> onPause()
-                is TimerState.Paused -> onStart()
+            when (timerState.status) {
+                PomodoroStatus.IDLE -> onStart()
+                PomodoroStatus.RUNNING -> onPause()
+                PomodoroStatus.PAUSED -> onStart()
             }
         }
     ) {
-
-        val buttonText = when (timerState) {
-            TimerState.Idle -> stringResource(R.string.start_button_text_label)
-            is TimerState.Running -> stringResource(R.string.pause_button_text_label)
-            is TimerState.Paused -> stringResource(R.string.resume_button_text_label)
+        val buttonText = when (timerState.status) {
+            PomodoroStatus.IDLE -> stringResource(R.string.start_button_text_label)
+            PomodoroStatus.RUNNING -> stringResource(R.string.pause_button_text_label)
+            PomodoroStatus.PAUSED -> stringResource(R.string.resume_button_text_label)
         }
 
         Text(
@@ -134,26 +113,24 @@ fun StartPauseSessionButton(
     }
 }
 
-fun formatTime(millis: Long) : String {
+fun formatTime(millis: Long): String {
     val minutes = (millis / 60_000).toString().padStart(2, '0')
     val seconds = ((millis / 1_000) % 60).toString().padStart(2, '0')
-
     return "$minutes : $seconds"
 }
 
 @Composable
-fun getSessionStatus(timerState: TimerState) : String {
-    return when (timerState) {
-        TimerState.Idle -> stringResource(R.string.idle_state_text_label)
-        is TimerState.Running -> {
-            val period = timerState.period
-            when (period) {
-                TimerState.Period.LongBreak -> stringResource(R.string.long_break_state_text_label)
-                TimerState.Period.ShortBreak -> stringResource(R.string.short_break_state_text_label)
-                TimerState.Period.Work -> stringResource(R.string.work_state_text_label)
+fun getSessionStatus(timerState: PomodoroEngineState): String {
+    return when (timerState.status) {
+        PomodoroStatus.IDLE -> stringResource(R.string.idle_state_text_label)
+        PomodoroStatus.PAUSED -> stringResource(R.string.paused_state_text_label)
+        PomodoroStatus.RUNNING -> {
+            when (timerState.period) {
+                PomodoroPeriod.Work -> stringResource(R.string.work_state_text_label)
+                PomodoroPeriod.ShortBreak -> stringResource(R.string.short_break_state_text_label)
+                PomodoroPeriod.LongBreak -> stringResource(R.string.long_break_state_text_label)
             }
         }
-        is TimerState.Paused -> stringResource(R.string.paused_state_text_label)
     }
 }
 

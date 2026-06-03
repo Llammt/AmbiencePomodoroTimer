@@ -41,7 +41,7 @@ fun AppNavigation() {
 
         composable(Routes.PlaySession.route) {
             val viewModel: TimerViewModel = koinViewModel()
-            PlaySessionScreen(viewModel, navController)
+            PlaySessionScreen(navController, viewModel)
         }
 
         composable(Routes.Statistics.route) {
