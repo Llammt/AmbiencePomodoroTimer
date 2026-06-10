@@ -43,15 +43,10 @@ fun MainMenuScreen(navController: NavController) {
 
             SelectSessionTextLabel()
 
-            NewSessionButton {
+            PomodoroSessionButton {
                 navController
                     .navigate(Routes.NewSession.route)
             }
-
-//            PlaySessionButton {
-//                navController
-//                    .navigate(Routes.PlaySession.route)
-//            }
 
             StatisticsButton {
                 navController
@@ -62,20 +57,20 @@ fun MainMenuScreen(navController: NavController) {
 }
 
 @Composable
-fun NewSessionButton(clicked : ()-> Unit) {
-    Button(onClick = clicked) {
-        Text(
-            text = stringResource(R.string.new_session_button_label),
-            fontFamily = FontFamily(Font(R.font.kurale_regular)),
-            fontSize = 24.sp)
-    }
+fun SelectSessionTextLabel() {
+    Text(
+        text = stringResource(R.string.select_session_text_label),
+        fontFamily = FontFamily(Font(R.font.kurale_regular)),
+        fontSize = 24.sp,
+        color = MaterialTheme.colorScheme.surfaceVariant
+    )
 }
 
 @Composable
-fun PlaySessionButton(clicked : ()-> Unit) {
+fun PomodoroSessionButton(clicked : ()-> Unit) {
     Button(onClick = clicked) {
         Text(
-            text = stringResource(R.string.play_session_button_label),
+            text = stringResource(R.string.pomodoro_menu_button_label),
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp)
     }
@@ -89,16 +84,6 @@ fun StatisticsButton(clicked : ()-> Unit) {
             fontFamily = FontFamily(Font(R.font.kurale_regular)),
             fontSize = 24.sp)
     }
-}
-
-@Composable
-fun SelectSessionTextLabel() {
-    Text(
-        text = stringResource(R.string.select_session_text_label),
-        fontFamily = FontFamily(Font(R.font.kurale_regular)),
-        fontSize = 24.sp,
-        color = MaterialTheme.colorScheme.surfaceVariant
-    )
 }
 
 @Composable

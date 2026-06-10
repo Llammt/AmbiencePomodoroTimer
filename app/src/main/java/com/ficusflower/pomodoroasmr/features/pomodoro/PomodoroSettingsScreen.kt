@@ -8,15 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ficusflower.pomodoroasmr.R
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 
 @Composable
-fun NewSessionScreen(
+fun PomodoroSettingsScreen(
     onStartSession: (PomodoroConfig) -> Unit
 ) {
     var workMinutes by remember { mutableStateOf(25) }

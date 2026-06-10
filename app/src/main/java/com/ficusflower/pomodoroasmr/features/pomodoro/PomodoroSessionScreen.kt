@@ -23,7 +23,7 @@ import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun PlaySessionScreen(
+fun PomodoroSessionScreen(
     navController: NavController,
     viewModel: TimerViewModel = koinViewModel()
 ) {
