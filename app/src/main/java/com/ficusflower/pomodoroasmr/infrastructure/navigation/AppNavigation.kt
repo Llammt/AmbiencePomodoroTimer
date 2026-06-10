@@ -16,6 +16,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val timerViewModel: TimerViewModel = koinViewModel()
 
     NavHost(
         navController = navController,
@@ -36,7 +37,12 @@ fun AppNavigation() {
         }
 
         composable(Routes.NewSession.route) {
-            NewSessionScreen()
+            NewSessionScreen(
+                onStartSession = { config ->
+                    timerViewModel.startTimer(config)
+                    navController.navigate(Routes.PlaySession.route)
+                }
+            )
         }
 
         composable(Routes.PlaySession.route) {

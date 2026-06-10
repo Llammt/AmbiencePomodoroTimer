@@ -13,7 +13,7 @@ class TrackingManager(
 
     fun startCurrent() {
         when (_currentMode.value) {
-            AppMode.POMODORO -> pomodoroEngine.start()
+            AppMode.POMODORO -> pomodoroEngine.start(pomodoroEngine.currentConfig)
             AppMode.STOPWATCH -> {}
             AppMode.TIMER -> {}
         }

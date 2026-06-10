@@ -60,8 +60,9 @@ fun PlaySessionScreen(
             ) {
                 StartPauseSessionButton(
                     timerState = timerState,
-                    onStart = { viewModel.startTimer() },
-                    onPause = { viewModel.pauseTimer() }
+                    onStart = { viewModel.startTimer(viewModel.pomodoroEngine.currentConfig) },
+                    onPause = { viewModel.pauseTimer() },
+                    onResume = { viewModel.resumeTimer() }
                 )
 
                 StopSessionButton {
@@ -88,14 +89,15 @@ fun StopSessionButton(clicked: () -> Unit) {
 fun StartPauseSessionButton(
     timerState: PomodoroEngineState,
     onStart: () -> Unit,
-    onPause: () -> Unit
+    onPause: () -> Unit,
+    onResume: () -> Unit
 ) {
     Button(
         onClick = {
             when (timerState.status) {
                 PomodoroStatus.IDLE -> onStart()
                 PomodoroStatus.RUNNING -> onPause()
-                PomodoroStatus.PAUSED -> onStart()
+                PomodoroStatus.PAUSED -> onResume()
             }
         }
     ) {
@@ -126,9 +128,17 @@ fun getSessionStatus(timerState: PomodoroEngineState): String {
         PomodoroStatus.PAUSED -> stringResource(R.string.paused_state_text_label)
         PomodoroStatus.RUNNING -> {
             when (timerState.period) {
-                PomodoroPeriod.Work -> stringResource(R.string.work_state_text_label)
-                PomodoroPeriod.ShortBreak -> stringResource(R.string.short_break_state_text_label)
-                PomodoroPeriod.LongBreak -> stringResource(R.string.long_break_state_text_label)
+                is PomodoroPeriod.Work -> {
+                    stringResource(R.string.work_state_text_label)
+                }
+
+                is PomodoroPeriod.ShortBreak -> {
+                    stringResource(R.string.short_break_state_text_label)
+                }
+
+                is PomodoroPeriod.LongBreak -> {
+                    stringResource(R.string.long_break_state_text_label)
+                }
             }
         }
     }

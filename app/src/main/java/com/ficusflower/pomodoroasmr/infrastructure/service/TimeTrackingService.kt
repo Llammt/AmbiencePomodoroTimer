@@ -45,11 +45,9 @@ class TimeTrackingService : Service() {
     private fun startTracking() {
         trackingManager.startCurrent()
 
-        // Запускаем Foreground-режим с дефолтным уведомлением
         val notification = buildNotification("Focus", "00:00")
         startForeground(NOTIFICATION_ID, notification)
 
-        // Наблюдаем за тиканьем доменного движка
         observeJob?.cancel()
         observeJob = serviceScope.launch {
             trackingManager.pomodoroEngine.state.collect { state ->
@@ -85,8 +83,8 @@ class TimeTrackingService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(content)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Замени на свою иконку, когда будет
-            .setOnlyAlertOnce(true) // Чтобы телефон не вибрировал на каждый тик секунд
+            .setSmallIcon(R.drawable.ic_launcher_foreground) // TODO: app icon
+            .setOnlyAlertOnce(true)
             .setOngoing(true)
             .build()
     }
@@ -101,7 +99,7 @@ class TimeTrackingService : Service() {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Time Tracking Service",
-                NotificationManager.IMPORTANCE_LOW // LOW, чтобы не было звуков на каждый показ
+                NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)

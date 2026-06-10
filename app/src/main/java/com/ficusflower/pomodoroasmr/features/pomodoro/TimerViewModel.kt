@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEffect
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngine
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TimerViewModel(
-    private val pomodoroEngine: PomodoroEngine,
+    val pomodoroEngine: PomodoroEngine,
     private val context: Context,
     private val audioPlayer: AudioPlayer
 ) : ViewModel() {
@@ -40,7 +41,13 @@ class TimerViewModel(
         }
     }
 
-    fun startTimer() {
+    fun startTimer(config: PomodoroConfig) {
+        pomodoroEngine.start(config)
+        sendCommand(TimeTrackingService.ACTION_START)
+    }
+
+    fun resumeTimer() {
+        pomodoroEngine.start(pomodoroEngine.currentConfig)
         sendCommand(TimeTrackingService.ACTION_START)
     }
 

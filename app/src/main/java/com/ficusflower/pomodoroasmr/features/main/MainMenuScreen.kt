@@ -48,10 +48,10 @@ fun MainMenuScreen(navController: NavController) {
                     .navigate(Routes.NewSession.route)
             }
 
-            PlaySessionButton {
-                navController
-                    .navigate(Routes.PlaySession.route)
-            }
+//            PlaySessionButton {
+//                navController
+//                    .navigate(Routes.PlaySession.route)
+//            }
 
             StatisticsButton {
                 navController
