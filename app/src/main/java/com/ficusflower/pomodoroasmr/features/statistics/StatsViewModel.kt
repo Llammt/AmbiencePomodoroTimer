@@ -63,10 +63,11 @@ class StatsViewModel(private val repository: SessionRepository) : ViewModel() {
     private fun formatDuration(millis: Long): String {
         val minutes = (millis / (1000 * 60)) % 60
         val hours = (millis / (1000 * 60 * 60))
+        val seconds = (millis / 1000) % 60
 
         return when {
             hours > 0 -> "${hours}h ${minutes}m"
-            else -> "${minutes}m"
+            else -> "${minutes}m ${seconds}s"
         }
     }
 }
