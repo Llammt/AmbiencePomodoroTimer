@@ -1,10 +1,12 @@
 package com.ficusflower.pomodoroasmr.domain.timer
 
+import android.util.Log
 import com.ficusflower.pomodoroasmr.domain.model.Session
 import com.ficusflower.pomodoroasmr.domain.repository.SessionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
+import kotlin.text.insert
 
 sealed interface PomodoroEffect {
     object PeriodFinished : PomodoroEffect
@@ -24,6 +26,8 @@ class PomodoroEngine(
 
     private val _effects = MutableSharedFlow<PomodoroEffect>()
     val effects: SharedFlow<PomodoroEffect> = _effects.asSharedFlow()
+    private var _pendingWorkDuration = MutableStateFlow<Long>(0L)
+    val pendingWorkDuration: StateFlow<Long?> = _pendingWorkDuration.asStateFlow()
 
     fun start(config: PomodoroConfig) {
         if (_state.value.status == PomodoroStatus.RUNNING) return
@@ -53,6 +57,7 @@ class PomodoroEngine(
 
     fun stop() {
         timerJob?.cancel()
+        if (currentPeriod is PomodoroPeriod.Work) updateWorkDuration()
         currentPeriod = PomodoroPeriod.Work(currentConfig.workDurationMillis)
 
         _state.value = PomodoroEngineState(
@@ -78,11 +83,7 @@ class PomodoroEngine(
     private suspend fun onPeriodFinished() {
         if (currentPeriod is PomodoroPeriod.Work) {
             cycleCount++
-            val record = Session(
-                date = LocalDate.now().toString(),
-                workDuration = currentPeriod.durationMillis
-            )
-            repository.insert(record)
+            updateWorkDuration()
         }
 
         currentPeriod = nextPeriod(currentPeriod)
@@ -98,6 +99,28 @@ class PomodoroEngine(
         startTicker(currentPeriod.durationMillis)
     }
 
+    private fun updateWorkDuration() {
+        val elapsedMillis = currentPeriod.durationMillis - _state.value.millisLeft
+        _pendingWorkDuration.update { currentValue ->
+            currentValue + elapsedMillis
+        }
+        Log.d("PomodoroEngine", "Updated work duration: ${_pendingWorkDuration.value}")
+        Log.d("PomodoroEngine", "Elapsed time: $elapsedMillis")
+        Log.d("PomodoroEngine", "_state.value.millisLeft: ${_state.value.millisLeft}")
+    }
+
+    suspend fun saveWorkDuration() {
+        val record = Session(
+            date = LocalDate.now().toString(),
+            workDuration = pendingWorkDuration.value ?: 0
+        )
+        repository.insert(record)
+    }
+
+    fun resetWorkDuration() {
+        _pendingWorkDuration.value = 0L
+    }
+
     private fun nextPeriod(period: PomodoroPeriod): PomodoroPeriod = when (period) {
         is PomodoroPeriod.Work -> {
             if ((cycleCount + 1) % 4 == 0) {
@@ -109,6 +132,14 @@ class PomodoroEngine(
         is PomodoroPeriod.ShortBreak, is PomodoroPeriod.LongBreak -> {
             PomodoroPeriod.Work(currentConfig.workDurationMillis)
         }
+    }
+
+    suspend fun saveWorkDuration(duration: Long) {
+        val record = Session(
+            date = LocalDate.now().toString(),
+            workDuration = duration
+        )
+        repository.insert(record)
     }
 }
 

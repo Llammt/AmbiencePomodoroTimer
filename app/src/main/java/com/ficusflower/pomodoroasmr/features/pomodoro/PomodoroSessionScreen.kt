@@ -3,9 +3,11 @@ package com.ficusflower.pomodoroasmr.features.pomodoro
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +23,13 @@ import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroPeriod
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
 import org.koin.compose.viewmodel.koinViewModel
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun PomodoroSessionScreen(
     navController: NavController,
     viewModel: TimerViewModel = koinViewModel()
+
 ) {
     val timerState by viewModel.state.collectAsState()
     val formattedTime = formatTime(timerState.millisLeft)
@@ -71,6 +75,7 @@ fun PomodoroSessionScreen(
             }
         }
         PlaySessionImageFooter(modifier = Modifier.align(Alignment.BottomCenter))
+        DurationSavingDialogue(viewModel = viewModel)
     }
 }
 
@@ -151,4 +156,35 @@ fun PlaySessionImageFooter(modifier: Modifier = Modifier) {
         contentDescription = null,
         modifier = modifier.fillMaxWidth()
     )
+}
+
+@Composable
+fun DurationSavingDialogue(
+    viewModel: TimerViewModel = koinViewModel()
+) {
+    val showDialog by viewModel.showSaveDialog.collectAsState()
+    val pendingTimeText by viewModel.pendingTimeFormatted.collectAsState()
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(stringResource(R.string.pomodoro_session_if_user_want_to_save_work_time)) },
+            text = {
+                Text(stringResource(
+                    R.string.pomodoro_session_work_time_dialog_info,
+                    pendingTimeText)
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onSaveWorkTime() }) {
+                    Text(stringResource(R.string.pomodoro_session_save_work_time))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDiscardWorkTime() }) {
+                    Text(stringResource(R.string.pomodoro_session_not_save_work_time) )
+                }
+            }
+        )
+    }
 }

@@ -9,18 +9,25 @@ import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEffect
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngine
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
 import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
 import com.ficusflower.pomodoroasmr.infrastructure.service.TimeTrackingService
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class TimerViewModel(
     val pomodoroEngine: PomodoroEngine,
     private val context: Context,
     private val audioPlayer: AudioPlayer
 ) : ViewModel() {
+    private val _showSaveDialog = MutableStateFlow(false)
+    val showSaveDialog: StateFlow<Boolean> = _showSaveDialog.asStateFlow()
 
     val state: StateFlow<PomodoroEngineState> = pomodoroEngine.state
         .stateIn(
@@ -56,7 +63,29 @@ class TimerViewModel(
     }
 
     fun stopTimer() {
-        sendCommand(TimeTrackingService.ACTION_STOP)
+        when (state.value.status) {
+            PomodoroStatus.IDLE -> {}
+            else -> {
+                sendCommand(TimeTrackingService.ACTION_STOP)
+                _showSaveDialog.value = true
+            }
+        }
+    }
+
+    fun onSaveWorkTime() {
+        val durationToSave = pomodoroEngine.pendingWorkDuration.value ?: 0L
+
+        viewModelScope.launch {
+            pomodoroEngine.saveWorkDuration(durationToSave)
+        }
+
+        _showSaveDialog.value = false
+        pomodoroEngine.resetWorkDuration()
+    }
+
+    fun onDiscardWorkTime() {
+        _showSaveDialog.value = false
+        pomodoroEngine.resetWorkDuration()
     }
 
     private fun sendCommand(action: String) {
@@ -65,6 +94,10 @@ class TimerViewModel(
         }
         ContextCompat.startForegroundService(context, intent)
     }
+
+    val pendingTimeFormatted: StateFlow<String> = pomodoroEngine.pendingWorkDuration
+        .map { millis -> formatTime(millis ?: 0L) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "00:00")
 
     override fun onCleared() {
         audioPlayer.stop()
