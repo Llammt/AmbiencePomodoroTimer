@@ -13,13 +13,13 @@ sealed interface PomodoroEffect {
 }
 
 class PomodoroEngine(
-    private val repository: SessionRepository
+    private val repository: SessionRepository,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 ) {
     var currentConfig = PomodoroConfig()
     private var currentPeriod: PomodoroPeriod = PomodoroPeriod.Work(currentConfig.workDurationMillis)
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private var timerJob: Job? = null
-    private var cycleCount = 0
+    var cycleCount = 0
 
     private val _state = MutableStateFlow(PomodoroEngineState())
     val state: StateFlow<PomodoroEngineState> = _state.asStateFlow()
@@ -104,9 +104,6 @@ class PomodoroEngine(
         _pendingWorkDuration.update { currentValue ->
             currentValue + elapsedMillis
         }
-        Log.d("PomodoroEngine", "Updated work duration: ${_pendingWorkDuration.value}")
-        Log.d("PomodoroEngine", "Elapsed time: $elapsedMillis")
-        Log.d("PomodoroEngine", "_state.value.millisLeft: ${_state.value.millisLeft}")
     }
 
     suspend fun saveWorkDuration() {

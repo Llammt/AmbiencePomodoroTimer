@@ -113,6 +113,8 @@ dependencies {
     implementation("io.insert-koin:koin-android:4.2.1") // версию можно взять посвежее
 // Поддержка Jetpack Compose
     implementation("io.insert-koin:koin-androidx-compose:4.2.1")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0") // версия может быть новее
 }
 
 buildscript {
