@@ -110,11 +110,13 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
 
     // Сама библиотека Koin для Android
-    implementation("io.insert-koin:koin-android:4.2.1") // версию можно взять посвежее
-// Поддержка Jetpack Compose
+    implementation("io.insert-koin:koin-android:4.2.1")
+    // Поддержка Jetpack Compose
     implementation("io.insert-koin:koin-androidx-compose:4.2.1")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0") // версия может быть новее
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+
+    testImplementation("io.mockk:mockk:1.14.11")
 }
 
 buildscript {

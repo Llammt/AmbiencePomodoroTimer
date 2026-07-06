@@ -1,12 +1,10 @@
 package com.ficusflower.pomodoroasmr.domain.timer
 
-import android.util.Log
 import com.ficusflower.pomodoroasmr.domain.model.Session
 import com.ficusflower.pomodoroasmr.domain.repository.SessionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
-import kotlin.text.insert
 
 sealed interface PomodoroEffect {
     object PeriodFinished : PomodoroEffect
@@ -104,14 +102,6 @@ class PomodoroEngine(
         _pendingWorkDuration.update { currentValue ->
             currentValue + elapsedMillis
         }
-    }
-
-    suspend fun saveWorkDuration() {
-        val record = Session(
-            date = LocalDate.now().toString(),
-            workDuration = pendingWorkDuration.value ?: 0
-        )
-        repository.insert(record)
     }
 
     fun resetWorkDuration() {
