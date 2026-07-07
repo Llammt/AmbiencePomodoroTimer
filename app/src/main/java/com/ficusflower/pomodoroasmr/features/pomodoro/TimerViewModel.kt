@@ -48,12 +48,10 @@ class TimerViewModel(
     }
 
     fun startTimer(config: PomodoroConfig) {
-        pomodoroEngine.start(config)
         sendCommand(TimeTrackingService.ACTION_START)
     }
 
     fun resumeTimer() {
-        pomodoroEngine.start(pomodoroEngine.currentConfig)
         sendCommand(TimeTrackingService.ACTION_START)
     }
 

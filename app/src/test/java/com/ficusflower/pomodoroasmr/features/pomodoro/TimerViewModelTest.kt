@@ -3,7 +3,6 @@ package com.ficusflower.pomodoroasmr.features.pomodoro
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import com.ficusflower.pomodoroasmr.MainDispatcherRule
 import com.ficusflower.pomodoroasmr.domain.repository.FakeSessionRepository
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
@@ -17,7 +16,6 @@ import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
-import io.mockk.unmockkConstructor
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -45,19 +43,30 @@ class TimerViewModelTest {
 
     @Before
     fun setUp() {
-        mockkStatic(ContextCompat::class)
-        every { ContextCompat.startForegroundService(any(), any()) } returns mockk()
-
-        mockkConstructor(Intent::class)
-        every { anyConstructed<Intent>().setAction(any()) } answers { it.invocation.self as Intent }
-        every { ContextCompat.startForegroundService(any(), any()) } returns Unit
-
         fakeRepository = FakeSessionRepository()
-
         pomodoroEngine = PomodoroEngine(
             repository = fakeRepository,
             scope = kotlinx.coroutines.CoroutineScope(mainDispatcherRule.testDispatcher)
         )
+
+        mockkStatic(ContextCompat::class)
+        mockkConstructor(Intent::class)
+
+        var capturedAction: String? = null
+
+        every { anyConstructed<Intent>().setAction(any()) } answers {
+            capturedAction = firstArg<String>()
+            it.invocation.self as Intent
+        }
+
+        every { ContextCompat.startForegroundService(any(), any()) } answers {
+            when (capturedAction) {
+                TimeTrackingService.ACTION_START -> pomodoroEngine.start(PomodoroConfig())
+                TimeTrackingService.ACTION_PAUSE -> pomodoroEngine.pause()
+                TimeTrackingService.ACTION_STOP -> pomodoroEngine.stop()
+            }
+            Unit
+        }
 
         viewModel = TimerViewModel(
             pomodoroEngine = pomodoroEngine,
@@ -85,7 +94,6 @@ class TimerViewModelTest {
         val stateAfterStartTimer = viewModel.state.first()
 
         viewModel.pauseTimer()
-        pomodoroEngine.pause()
 
         val stateAfterPauseTimer = viewModel.state.first()
 
@@ -94,7 +102,6 @@ class TimerViewModelTest {
         val stateAfterResumeTimer = viewModel.state.first()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val stateAfterStopTimer = viewModel.state.first()
 
@@ -103,7 +110,6 @@ class TimerViewModelTest {
         val stateAfterStartTimer2 = viewModel.state.first()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val stateAfterStopTimer2 = viewModel.state.first()
 
@@ -128,7 +134,6 @@ class TimerViewModelTest {
         val stateAfterResumeRunningTimer = viewModel.state.first()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         assertEquals(PomodoroStatus.RUNNING, stateAfterResumeRunningTimer.status)
     }
@@ -138,7 +143,6 @@ class TimerViewModelTest {
         backgroundScope.launch { viewModel.state.collect {} }
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val actualShowDialog = viewModel.showSaveDialog.value
         assertEquals(false, actualShowDialog)
@@ -152,7 +156,6 @@ class TimerViewModelTest {
         viewModel.startTimer(config)
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val actualShowDialog = viewModel.showSaveDialog.value
         assertEquals(true, actualShowDialog)
@@ -166,10 +169,8 @@ class TimerViewModelTest {
         viewModel.startTimer(config)
 
         viewModel.pauseTimer()
-        pomodoroEngine.pause()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val actualShowDialog = viewModel.showSaveDialog.value
         assertEquals(true, actualShowDialog)
@@ -183,7 +184,6 @@ class TimerViewModelTest {
         viewModel.startTimer(config)
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         viewModel.onDiscardWorkTime()
 
@@ -205,7 +205,6 @@ class TimerViewModelTest {
         runCurrent()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         viewModel.onSaveWorkTime()
 
@@ -220,6 +219,36 @@ class TimerViewModelTest {
     }
 
     @Test
+    fun `pauseTimer should save duration correctly`() = runTest(mainDispatcherRule.testDispatcher) {
+        backgroundScope.launch { viewModel.state.collect {} }
+
+        val config = PomodoroConfig()
+        viewModel.startTimer(config)
+
+        advanceTimeBy(10 * 60 * 1000L)
+        runCurrent()
+
+        viewModel.pauseTimer()
+
+        advanceTimeBy(10 * 60 * 1000L)
+        runCurrent()
+
+        viewModel.resumeTimer()
+
+        advanceTimeBy(10 * 60 * 1000L)
+        runCurrent()
+
+        viewModel.stopTimer()
+
+        viewModel.onSaveWorkTime()
+
+        val totalFlow = fakeRepository.getTotalWorkDuration()
+        val total = totalFlow.first()
+
+        assertEquals(20 * 60 * 1000L, total)
+    }
+
+    @Test
     fun `pendingTimeFormatted formats pending duration correctly`() = runTest(mainDispatcherRule.testDispatcher) {
         backgroundScope.launch { viewModel.state.collect {} }
 
@@ -230,7 +259,6 @@ class TimerViewModelTest {
         runCurrent()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         val formatted = viewModel.pendingTimeFormatted.first()
         assertEquals("10 : 00", formatted)
@@ -244,12 +272,10 @@ class TimerViewModelTest {
         viewModel.startTimer(config)
 
         viewModel.pauseTimer()
-        pomodoroEngine.pause()
 
         viewModel.resumeTimer()
 
         viewModel.stopTimer()
-        pomodoroEngine.stop()
 
         verify(exactly = 2) {
             anyConstructed<Intent>().setAction(TimeTrackingService.ACTION_START)
