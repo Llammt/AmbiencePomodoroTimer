@@ -100,6 +100,10 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.8.9")
 
+    val coroutines_version = "1.11.0"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+
     //Room
     val room_version = "2.8.4"
 
@@ -114,7 +118,9 @@ dependencies {
     // Поддержка Jetpack Compose
     implementation("io.insert-koin:koin-androidx-compose:4.2.1")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
 
     testImplementation("io.mockk:mockk:1.14.11")
 }
