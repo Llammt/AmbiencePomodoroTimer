@@ -27,6 +27,7 @@
         <item>Sat</item>
         <item>Sun</item>
     </string-array>
+
     <string name="work_time_daily">Daily focus time: %s</string>
     <string name="work_time_total">Total focus time: %s</string>
 
@@ -34,8 +35,16 @@
     <string name="pomodoro_settings_increase_time_label">"+"</string>
     <string name="pomodoro_settings_decrease_time_label">"_"</string>
 
-    <string name="pomodoro_session_if_user_want_to_save_work_time">"Save work time?"</string>">
+    <string name="pomodoro_session_if_user_want_to_save_work_time">"Save work time?"</string>
     <string name="pomodoro_session_work_time_dialog_info">You have worked for %s. Save to statistics?</string>
-    <string name="pomodoro_session_save_work_time">"Save"</string>">
-    <string name="pomodoro_session_not_save_work_time">"Discard"</string>">
+    <string name="pomodoro_session_save_work_time">"Save"</string>
+    <string name="pomodoro_session_not_save_work_time">"Discard"</string>
+
+    <string name="ambient_sound_menu_text_label">"Ambient Sound"</string>
+    <string-array name="ambient_sound_list">
+        <item>Silence</item>
+        <item>Session end alert only</item>
+        <item>Import from device...</item>
+    </string-array>
+
 </resources>

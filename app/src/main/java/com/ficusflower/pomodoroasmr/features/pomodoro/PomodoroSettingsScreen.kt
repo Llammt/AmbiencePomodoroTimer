@@ -7,6 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,8 +38,11 @@ fun PomodoroSettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         TimeSettingRow(label = stringResource(R.string.work_state_text_label), value = workMinutes, onValueChange = { workMinutes = it })
+        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
         TimeSettingRow(label = stringResource(R.string.short_break_state_text_label), value = shortBreakMinutes, onValueChange = { shortBreakMinutes = it })
+        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
         TimeSettingRow(label = stringResource(R.string.long_break_state_text_label), value = longBreakMinutes, onValueChange = { longBreakMinutes = it })
+        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(48.dp))
 
@@ -91,6 +96,99 @@ fun TimeSettingRow(
 
             IconButton(onClick = { if (value < 60) onValueChange(value + 1) }) {
                 Icon(Icons.Default.KeyboardArrowUp, contentDescription = "+")
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SoundSelectionDropdown(
+    modifier: Modifier = Modifier
+) {
+    val labelText = stringResource(R.string.ambient_sound_menu_text_label)
+    val baseOptions = stringArrayResource(R.array.ambient_sound_list)
+
+    var customSoundName by remember { mutableStateOf<String?>(null) } //TODO: move to ViewModel
+
+    val options = remember(customSoundName) {
+        val list = baseOptions.toMutableList()
+        if (customSoundName != null && list.isNotEmpty()) {
+            list[list.lastIndex] = customSoundName!!
+        }
+        list
+    }
+
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf(baseOptions[1]) }
+
+    val lightGreenField = Color(0xFFDCE5D8)
+    val sandAccentMenu = Color(0xFFF7EFE0)
+
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
+        Text(
+            text = labelText,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
+        )
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedOption,
+                onValueChange = {},
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = lightGreenField,
+                    unfocusedContainerColor = lightGreenField,
+                    focusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                ),
+                modifier = Modifier
+                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                    .fillMaxWidth()
+            )
+
+            MaterialTheme(
+                colorScheme = MaterialTheme.colorScheme.copy(
+                    surface = sandAccentMenu,
+                    surfaceContainer = sandAccentMenu,
+                    surfaceContainerHigh = sandAccentMenu
+                )
+            ) {
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    options.forEachIndexed { index, option ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = option,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            onClick = {
+                                if (index == options.lastIndex) {
+                                    val fakeFileName = "rain_in_forest.mp3"
+                                    customSoundName = fakeFileName
+                                    selectedOption = fakeFileName
+                                    expanded = false
+                                } else {
+                                    selectedOption = option
+                                    expanded = false
+                                }
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        )
+                    }
+                }
             }
         }
     }
