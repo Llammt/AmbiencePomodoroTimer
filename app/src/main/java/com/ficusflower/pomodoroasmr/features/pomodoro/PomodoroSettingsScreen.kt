@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ficusflower.pomodoroasmr.R
+import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 
 @Composable
@@ -22,6 +23,10 @@ fun PomodoroSettingsScreen(
     var workMinutes by remember { mutableStateOf(25) }
     var shortBreakMinutes by remember { mutableStateOf(5) }
     var longBreakMinutes by remember { mutableStateOf(15) }
+
+    var workAudioMode by remember { mutableStateOf<AudioMode>(AudioMode.SessionEndAlert) }
+    var shortBreakAudioMode by remember { mutableStateOf<AudioMode>(AudioMode.SessionEndAlert) }
+    var longBreakAudioMode by remember { mutableStateOf<AudioMode>(AudioMode.SessionEndAlert) }
 
     Column(
         modifier = Modifier
@@ -38,11 +43,20 @@ fun PomodoroSettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         TimeSettingRow(label = stringResource(R.string.work_state_text_label), value = workMinutes, onValueChange = { workMinutes = it })
-        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
+        SoundSelectionDropdown(
+            modifier = Modifier.fillMaxWidth(),
+            onModeSelected = { workAudioMode = it }
+        )
         TimeSettingRow(label = stringResource(R.string.short_break_state_text_label), value = shortBreakMinutes, onValueChange = { shortBreakMinutes = it })
-        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
+        SoundSelectionDropdown(
+            modifier = Modifier.fillMaxWidth(),
+            onModeSelected = { shortBreakAudioMode = it }
+        )
         TimeSettingRow(label = stringResource(R.string.long_break_state_text_label), value = longBreakMinutes, onValueChange = { longBreakMinutes = it })
-        SoundSelectionDropdown(modifier = Modifier.fillMaxWidth())
+        SoundSelectionDropdown(
+            modifier = Modifier.fillMaxWidth(),
+            onModeSelected = { longBreakAudioMode = it }
+        )
 
         Spacer(modifier = Modifier.height(48.dp))
 
@@ -51,7 +65,10 @@ fun PomodoroSettingsScreen(
                 val config = PomodoroConfig(
                     workDurationMillis = workMinutes * 60 * 1000L,
                     shortBreakDurationMillis = shortBreakMinutes * 60 * 1000L,
-                    longBreakDurationMillis = longBreakMinutes * 60 * 1000L
+                    longBreakDurationMillis = longBreakMinutes * 60 * 1000L,
+                    workAudioMode = workAudioMode,
+                    shortBreakAudioMode = shortBreakAudioMode,
+                    longBreakAudioMode = longBreakAudioMode
                 )
                 onStartSession(config)
             },
@@ -103,7 +120,8 @@ fun TimeSettingRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SoundSelectionDropdown(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onModeSelected: (AudioMode) -> Unit
 ) {
     val labelText = stringResource(R.string.ambient_sound_menu_text_label)
     val baseOptions = stringArrayResource(R.array.ambient_sound_list)
@@ -120,6 +138,10 @@ fun SoundSelectionDropdown(
 
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(baseOptions[1]) }
+
+    LaunchedEffect(Unit) {
+        onModeSelected(mapIndexToAudioMode(1))
+    }
 
     val lightGreenField = Color(0xFFDCE5D8)
     val sandAccentMenu = Color(0xFFF7EFE0)
@@ -180,9 +202,11 @@ fun SoundSelectionDropdown(
                                     customSoundName = fakeFileName
                                     selectedOption = fakeFileName
                                     expanded = false
+                                    onModeSelected(AudioMode.CustomAmbient(fakeFileName))
                                 } else {
                                     selectedOption = option
                                     expanded = false
+                                    onModeSelected(mapIndexToAudioMode(index))
                                 }
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -191,5 +215,16 @@ fun SoundSelectionDropdown(
                 }
             }
         }
+    }
+}
+
+private fun mapIndexToAudioMode(index: Int): AudioMode {
+    return when (index) {
+        0 -> AudioMode.Silence
+        1 -> AudioMode.SessionEndAlert
+        2 -> AudioMode.Ambient("spring forest")
+        3 -> AudioMode.Ambient("water")
+
+        else -> AudioMode.SessionEndAlert
     }
 }

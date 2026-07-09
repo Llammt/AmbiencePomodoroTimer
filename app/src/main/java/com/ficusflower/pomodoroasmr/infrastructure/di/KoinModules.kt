@@ -34,5 +34,5 @@ val appModule = module {
     single { TrackingManager(pomodoroEngine = get()) }
 
     viewModelOf(::StatsViewModel)
-    viewModel { TimerViewModel(pomodoroEngine = get(), context = androidContext(), audioPlayer = get()) }
+    viewModel { TimerViewModel(pomodoroEngine = get(), context = androidContext()) }
 }

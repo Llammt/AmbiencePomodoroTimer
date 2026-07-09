@@ -7,17 +7,23 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.ficusflower.pomodoroasmr.R
+import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEffect
+import com.ficusflower.pomodoroasmr.domain.timer.PomodoroPeriod
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
 import com.ficusflower.pomodoroasmr.domain.timer.TrackingManager
+import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 class TimeTrackingService : Service() {
 
     private val trackingManager: TrackingManager by inject()
+    private val audioPlayer: AudioPlayer by inject()
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var observeJob: Job? = null
+    private var effectsJob: Job? = null
 
     companion object {
         const val CHANNEL_ID = "time_tracking_channel"
@@ -56,6 +62,9 @@ class TimeTrackingService : Service() {
                         val minutes = (state.millisLeft / 60_000).toString().padStart(2, '0')
                         val seconds = ((state.millisLeft / 1_000) % 60).toString().padStart(2, '0')
                         updateNotification(state.period.label, "$minutes : $seconds")
+
+                        val currentMode = getAudioModeForPeriod(state.period)
+                        audioPlayer.playAmbient(currentMode)
                     }
                     PomodoroStatus.PAUSED -> {
                         updateNotification("Paused", "Timer is paused")
@@ -66,16 +75,31 @@ class TimeTrackingService : Service() {
                 }
             }
         }
+
+        effectsJob?.cancel()
+        effectsJob = serviceScope.launch {
+            trackingManager.pomodoroEngine.effects.collect { effect ->
+                when (effect) {
+                    is PomodoroEffect.PeriodFinished -> {
+                        val finishedMode = getAudioModeForPeriod(effect.completedPeriod)
+                        audioPlayer.playSessionBasicEndSound(finishedMode)
+                    }
+                }
+            }
+        }
     }
 
     private fun pauseTracking() {
         trackingManager.pauseCurrent()
+        audioPlayer.pause()
     }
 
     private fun stopTracking() {
         trackingManager.stopCurrent()
         observeJob?.cancel()
+        effectsJob?.cancel()
         stopForeground(STOP_FOREGROUND_REMOVE)
+        audioPlayer.stop()
         stopSelf()
     }
 
@@ -103,6 +127,15 @@ class TimeTrackingService : Service() {
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun getAudioModeForPeriod(period: PomodoroPeriod): AudioMode {
+        val config = trackingManager.pomodoroEngine.currentConfig
+        return when (period) {
+            is PomodoroPeriod.Work -> config.workAudioMode
+            is PomodoroPeriod.ShortBreak -> config.shortBreakAudioMode
+            is PomodoroPeriod.LongBreak -> config.longBreakAudioMode
         }
     }
 

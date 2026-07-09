@@ -6,11 +6,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEffect
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngine
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
-import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
 import com.ficusflower.pomodoroasmr.infrastructure.service.TimeTrackingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,8 +20,7 @@ import kotlinx.coroutines.launch
 
 class TimerViewModel(
     val pomodoroEngine: PomodoroEngine,
-    private val context: Context,
-    private val audioPlayer: AudioPlayer
+    private val context: Context
 ) : ViewModel() {
     private val _showSaveDialog = MutableStateFlow(false)
     val showSaveDialog: StateFlow<Boolean> = _showSaveDialog.asStateFlow()
@@ -35,19 +32,8 @@ class TimerViewModel(
             initialValue = PomodoroEngineState()
         )
 
-    init {
-        viewModelScope.launch {
-            pomodoroEngine.effects.collect { effect ->
-                when (effect) {
-                    PomodoroEffect.PeriodFinished -> {
-                        audioPlayer.playSessionBasicEndSound()
-                    }
-                }
-            }
-        }
-    }
-
     fun startTimer(config: PomodoroConfig) {
+        pomodoroEngine.currentConfig = config
         sendCommand(TimeTrackingService.ACTION_START)
     }
 
@@ -95,9 +81,4 @@ class TimerViewModel(
     val pendingTimeFormatted: StateFlow<String> = pomodoroEngine.pendingWorkDuration
         .map { millis -> formatTime(millis ?: 0L) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "00:00")
-
-    override fun onCleared() {
-        audioPlayer.stop()
-        super.onCleared()
-    }
 }

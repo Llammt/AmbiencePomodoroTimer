@@ -43,7 +43,9 @@
     <string name="ambient_sound_menu_text_label">"Ambient Sound"</string>
     <string-array name="ambient_sound_list">
         <item>Silence</item>
-        <item>Session end alert only</item>
+        <item>Alert only</item>
+        <item>Spring Forest</item>
+        <item>Water</item>
         <item>Import from device...</item>
     </string-array>
 

@@ -1,5 +1,6 @@
 package com.ficusflower.pomodoroasmr.domain.timer
 
+import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
 import com.ficusflower.pomodoroasmr.domain.model.Session
 import com.ficusflower.pomodoroasmr.domain.repository.SessionRepository
 import kotlinx.coroutines.*
@@ -7,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 
 sealed interface PomodoroEffect {
-    object PeriodFinished : PomodoroEffect
+    data class PeriodFinished(val completedPeriod: PomodoroPeriod) : PomodoroEffect
 }
 
 class PomodoroEngine(
@@ -84,6 +85,7 @@ class PomodoroEngine(
             updateWorkDuration()
         }
 
+        val completedPeriod = currentPeriod
         currentPeriod = nextPeriod(currentPeriod)
 
         _state.value = PomodoroEngineState(
@@ -92,7 +94,7 @@ class PomodoroEngine(
             millisLeft = currentPeriod.durationMillis
         )
 
-        _effects.emit(PomodoroEffect.PeriodFinished)
+        _effects.emit(PomodoroEffect.PeriodFinished(completedPeriod))
 
         startTicker(currentPeriod.durationMillis)
     }
@@ -146,5 +148,9 @@ sealed class PomodoroPeriod(val durationMillis: Long, val label: String) {
 data class PomodoroConfig(
     val workDurationMillis: Long = 25 * 60 * 1000L,
     val shortBreakDurationMillis: Long = 5 * 60 * 1000L,
-    val longBreakDurationMillis: Long = 15 * 60 * 1000L
+    val longBreakDurationMillis: Long = 15 * 60 * 1000L,
+    val workAudioMode: AudioMode = AudioMode.SessionEndAlert,
+    val shortBreakAudioMode: AudioMode = AudioMode.SessionEndAlert,
+    val longBreakAudioMode: AudioMode = AudioMode.SessionEndAlert
 )
+
