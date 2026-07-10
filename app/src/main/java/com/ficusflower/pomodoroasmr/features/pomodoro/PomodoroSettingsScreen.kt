@@ -1,4 +1,7 @@
 package com.ficusflower.pomodoroasmr.features.pomodoro
+import android.annotation.SuppressLint
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -8,13 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ficusflower.pomodoroasmr.R
+import com.ficusflower.pomodoroasmr.domain.audio.AmbientMode
 import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun PomodoroSettingsScreen(
@@ -123,8 +132,10 @@ fun SoundSelectionDropdown(
     modifier: Modifier = Modifier,
     onModeSelected: (AudioMode) -> Unit
 ) {
+    val context = LocalContext.current
     val labelText = stringResource(R.string.ambient_sound_menu_text_label)
     val baseOptions = stringArrayResource(R.array.ambient_sound_list)
+    val defaultCustomName = stringResource(R.string.custom_filename_text_label)
 
     var customSoundName by remember { mutableStateOf<String?>(null) } //TODO: move to ViewModel
 
@@ -141,6 +152,29 @@ fun SoundSelectionDropdown(
 
     LaunchedEffect(Unit) {
         onModeSelected(mapIndexToAudioMode(1))
+    }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+
+                val uriString = uri.toString()
+                val fileName = getFileNameFromUri(context, uri) ?: defaultCustomName
+
+                customSoundName = fileName
+                selectedOption = fileName
+
+                onModeSelected(AudioMode.CustomAmbient(uriString))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     val lightGreenField = Color(0xFFDCE5D8)
@@ -198,11 +232,8 @@ fun SoundSelectionDropdown(
                             },
                             onClick = {
                                 if (index == options.lastIndex) {
-                                    val fakeFileName = "rain_in_forest.mp3"
-                                    customSoundName = fakeFileName
-                                    selectedOption = fakeFileName
                                     expanded = false
-                                    onModeSelected(AudioMode.CustomAmbient(fakeFileName))
+                                    filePickerLauncher.launch(arrayOf("audio/*"))
                                 } else {
                                     selectedOption = option
                                     expanded = false
@@ -222,9 +253,34 @@ private fun mapIndexToAudioMode(index: Int): AudioMode {
     return when (index) {
         0 -> AudioMode.Silence
         1 -> AudioMode.SessionEndAlert
-        2 -> AudioMode.Ambient("spring forest")
-        3 -> AudioMode.Ambient("water")
+        2 -> AudioMode.Ambient(AmbientMode.SpringForest)
+        3 -> AudioMode.Ambient(AmbientMode.Water)
 
         else -> AudioMode.SessionEndAlert
     }
+}
+
+private fun getFileNameFromUri(context: android.content.Context, uri: Uri): String? {
+    var result: String? = null
+    if (uri.scheme == "content") {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (index != -1) {
+                    result = cursor.getString(index)
+                }
+            }
+        } finally {
+            cursor?.close()
+        }
+    }
+    if (result == null) {
+        result = uri.path
+        val cut = result?.lastIndexOf('/')
+        if (cut != null && cut != -1) {
+            result = result?.substring(cut + 1)
+        }
+    }
+    return result
 }

@@ -9,14 +9,23 @@ sealed class AudioMode {
 
     data object SessionEndAlert : AudioMode()
 
-    data class Ambient(val mode: String) : AudioMode() {
-        val ambientSound: Int
-            get() = when (mode) {
-                "spring forest" -> R.raw.ambient_spring_forest
-                "water" -> R.raw.ambient_water
-                else -> 0
-            }
+    data class Ambient(val mode: AmbientMode) : AudioMode() {
+        val ambientSound: Int = mode.sound
     }
 
-    data class CustomAmbient(val trackName: String) : AudioMode()
+    data class CustomAmbient(
+        val uriString: String
+    ) : AudioMode()
+}
+
+sealed class AmbientMode() {
+    abstract val sound : Int
+
+    data object SpringForest : AmbientMode() {
+        override val sound: Int = R.raw.ambient_spring_forest
+    }
+
+    data object Water : AmbientMode() {
+        override val sound: Int = R.raw.ambient_water
+    }
 }

@@ -70,8 +70,7 @@ class TimerViewModelTest {
 
         viewModel = TimerViewModel(
             pomodoroEngine = pomodoroEngine,
-            context = context,
-            audioPlayer = audioPlayer
+            context = context
         )
     }
 
@@ -292,15 +291,5 @@ class TimerViewModelTest {
         verify(atLeast = 4) {
             ContextCompat.startForegroundService(any(), any())
         }
-    }
-
-    @Test
-    fun `onCleared stops audio player`() {
-        val method = TimerViewModel::class.java.getDeclaredMethod("onCleared")
-        method.isAccessible = true
-
-        method.invoke(viewModel)
-
-        verify(exactly = 1) { audioPlayer.stop() }
     }
 }

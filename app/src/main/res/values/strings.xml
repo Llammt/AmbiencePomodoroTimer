@@ -46,7 +46,8 @@
         <item>Alert only</item>
         <item>Spring Forest</item>
         <item>Water</item>
-        <item>Import from device...</item>
+        <item>Import from device…</item>
     </string-array>
+    <string name="custom_filename_text_label">"Custom"</string>
 
 </resources>

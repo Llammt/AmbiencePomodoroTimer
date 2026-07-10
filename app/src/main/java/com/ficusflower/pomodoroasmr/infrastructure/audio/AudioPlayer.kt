@@ -2,7 +2,9 @@ package com.ficusflower.pomodoroasmr.infrastructure.audio
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
+import androidx.core.net.toUri
 
 class AudioPlayer(private val context: Context) {
     private var ambientPlayer: MediaPlayer? = null
@@ -31,30 +33,40 @@ class AudioPlayer(private val context: Context) {
         stopAmbient()
         currentAmbientMode = audioMode
 
+        ambientPlayer?.stop()
+        ambientPlayer?.release()
+
         when (audioMode) {
+            is AudioMode.Silence -> {
+                ambientPlayer = null
+            }
             is AudioMode.Ambient -> {
-                if (audioMode.ambientSound != 0) {
+                try {
                     ambientPlayer = MediaPlayer.create(context, audioMode.ambientSound).apply {
                         isLooping = true
                         start()
                     }
+                } catch (e: Exception) {
+                    ambientPlayer = null
                 }
             }
             is AudioMode.CustomAmbient -> {
                 try {
-                    val afd = context.assets.openFd(audioMode.trackName)
+                    val uri = Uri.parse(audioMode.uriString)
                     ambientPlayer = MediaPlayer().apply {
-                        setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                        prepare()
+                        setDataSource(context, uri)
                         isLooping = true
-                        start()
+                        setOnPreparedListener { player ->
+                            player.start()
+                        }
+                        prepareAsync()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     ambientPlayer = null
                 }
             }
-            is AudioMode.Silence, is AudioMode.SessionEndAlert -> { }
+            else -> { /* SessionEndAlert logic */ }
         }
     }
 
