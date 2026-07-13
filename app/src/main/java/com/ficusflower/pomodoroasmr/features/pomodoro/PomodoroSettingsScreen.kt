@@ -1,5 +1,4 @@
 package com.ficusflower.pomodoroasmr.features.pomodoro
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.compose.foundation.layout.*
@@ -23,7 +22,7 @@ import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.platform.LocalContext
+import com.ficusflower.pomodoroasmr.domain.audio.mapIndexToAudioMode
 
 @Composable
 fun PomodoroSettingsScreen(
@@ -248,18 +247,6 @@ fun SoundSelectionDropdown(
         }
     }
 }
-
-private fun mapIndexToAudioMode(index: Int): AudioMode {
-    return when (index) {
-        0 -> AudioMode.Silence
-        1 -> AudioMode.SessionEndAlert
-        2 -> AudioMode.Ambient(AmbientMode.SpringForest)
-        3 -> AudioMode.Ambient(AmbientMode.Water)
-
-        else -> AudioMode.SessionEndAlert
-    }
-}
-
 private fun getFileNameFromUri(context: android.content.Context, uri: Uri): String? {
     var result: String? = null
     if (uri.scheme == "content") {
