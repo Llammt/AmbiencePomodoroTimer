@@ -50,4 +50,6 @@
     </string-array>
     <string name="custom_filename_text_label">"Custom"</string>
 
+    <string name="weekly_activity_text_label">"Weekly Activity (min):"</string>
+
 </resources>
