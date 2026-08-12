@@ -16,4 +16,7 @@ interface SessionDao {
 
     @Query("SELECT SUM(workDuration) FROM session_records WHERE date = :formattedDate")
     fun getWorkDurationForDate(formattedDate: String): Flow<Long?>
+
+    @Query("SELECT * FROM session_records WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
+    fun getSessionsBetweenDates(startDate: String, endDate: String): Flow<List<SessionRecord>>
 }

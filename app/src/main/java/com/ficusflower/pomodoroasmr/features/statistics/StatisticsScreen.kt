@@ -35,7 +35,7 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
 
     val calendarState = remember(viewedMonth) { createCalendarState(viewedMonth)}
 
-    val fakeWeeklyData = remember { listOf(25, 50, 0, 75, 115, 45, 90) }
+    val weeklyMinutes by viewModel.weeklyMinutes.collectAsState()
     val scrollState = rememberScrollState()
 
     Column(
@@ -74,7 +74,7 @@ fun StatsScreen(viewModel: StatsViewModel = viewModel()) {
         Spacer(modifier = Modifier.height(40.dp))
 
         WeeklyStatsChart(
-            weeklyMinutes = fakeWeeklyData,
+            weeklyMinutes = weeklyMinutes,
             fontFamily = kuraleFont,
             modifier = Modifier.padding(bottom = 24.dp)
         )

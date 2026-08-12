@@ -22,6 +22,12 @@ class SessionRepositoryImpl(private val dao: SessionDao) : SessionRepository {
     override fun getTotalWorkDuration(): Flow<Long?> = dao.getTotalWorkDuration()
 
     override fun getDailyWorkDuration(date: String): Flow<Long?> = dao.getWorkDurationForDate(date)
+
+    override fun getSessionsBetweenDates(startDate: String, endDate: String): Flow<List<Session>> {
+        return dao.getSessionsBetweenDates(startDate, endDate).map { records ->
+            records.map { it.toDomain() }
+        }
+    }
 }
 
 fun Session.toEntity() = SessionRecord(id = id, workDuration = workDuration, date = date)

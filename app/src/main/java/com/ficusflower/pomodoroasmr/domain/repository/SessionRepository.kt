@@ -11,4 +11,6 @@ interface SessionRepository {
     fun getTotalWorkDuration(): Flow<Long?>
 
     fun getDailyWorkDuration(date: String): Flow<Long?>
+
+    fun getSessionsBetweenDates(startDate: String, endDate: String): Flow<List<Session>>
 }
