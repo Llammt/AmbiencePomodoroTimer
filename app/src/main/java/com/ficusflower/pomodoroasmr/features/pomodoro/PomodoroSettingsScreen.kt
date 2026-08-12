@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.domain.audio.AmbientMode
 import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
 import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 import android.content.Intent

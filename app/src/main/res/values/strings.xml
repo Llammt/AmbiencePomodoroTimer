@@ -46,6 +46,10 @@
         <item>Alert only</item>
         <item>Spring Forest</item>
         <item>Water</item>
+        <item>Hitslab: Irish Celtic Medieval Music</item>
+        <item>Maksym Malko: Medieval Irish Celtic, Ireland Music</item>
+        <item>Medieval Horizons: in the Courtyard of the Castle</item>
+        <item>Watermelon Beats: Medieval Folk Music</item>
         <item>Import from device…</item>
     </string-array>
     <string name="custom_filename_text_label">"Custom"</string>
