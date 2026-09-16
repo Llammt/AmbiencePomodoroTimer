@@ -21,6 +21,8 @@ import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import com.ficusflower.pomodoroasmr.domain.audio.mapIndexToAudioMode
 
 @Composable
@@ -42,6 +44,8 @@ fun PomodoroSettingsScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        SessionSettingsImageHeader(modifier = Modifier)
+
         Text(
             text = stringResource(R.string.pomodoro_settings_text_label),
             style = MaterialTheme.typography.titleLarge
@@ -123,6 +127,15 @@ fun TimeSettingRow(
             }
         }
     }
+}
+
+@Composable
+fun SessionSettingsImageHeader(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.session_settings_header ),
+        contentDescription = null,
+        modifier = modifier.fillMaxWidth()
+    )
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

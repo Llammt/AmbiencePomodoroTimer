@@ -73,8 +73,8 @@ fun PomodoroSessionScreen(
                     viewModel.stopTimer()
                 }
             }
+            PlaySessionImageFooter(modifier = Modifier)
         }
-        PlaySessionImageFooter(modifier = Modifier.align(Alignment.BottomCenter))
         DurationSavingDialogue(viewModel = viewModel)
     }
 }
