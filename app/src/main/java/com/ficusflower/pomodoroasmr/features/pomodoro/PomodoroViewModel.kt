@@ -5,10 +5,10 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngine
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroConfig
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroEngine
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroEngineState
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroStatus
 import com.ficusflower.pomodoroasmr.infrastructure.service.TimeTrackingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TimerViewModel(
+class PomodoroViewModel(
     val pomodoroEngine: PomodoroEngine,
     private val context: Context
 ) : ViewModel() {

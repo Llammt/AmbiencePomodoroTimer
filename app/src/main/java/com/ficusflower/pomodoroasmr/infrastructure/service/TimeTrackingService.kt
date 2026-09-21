@@ -5,13 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEffect
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroPeriod
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
-import com.ficusflower.pomodoroasmr.domain.timer.TrackingManager
+import com.ficusflower.pomodoroasmr.domain.engines.TrackingManager
+import com.ficusflower.pomodoroasmr.domain.engines.UnifiedEffect
+import com.ficusflower.pomodoroasmr.domain.engines.UnifiedStatus
 import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
@@ -49,27 +48,25 @@ class TimeTrackingService : Service() {
     }
 
     private fun startTracking() {
+
         trackingManager.startCurrent()
 
-        val notification = buildNotification("Focus", "00:00")
+        val notification = buildNotification(getString(R.string.time_tracker_text_label), "00:00")
         startForeground(NOTIFICATION_ID, notification)
 
         observeJob?.cancel()
         observeJob = serviceScope.launch {
-            trackingManager.pomodoroEngine.state.collect { state ->
+            trackingManager.activeState.collect { state ->
                 when (state.status) {
-                    PomodoroStatus.RUNNING -> {
-                        val minutes = (state.millisLeft / 60_000).toString().padStart(2, '0')
-                        val seconds = ((state.millisLeft / 1_000) % 60).toString().padStart(2, '0')
-                        updateNotification(state.period.label, "$minutes : $seconds")
-
-                        val currentMode = getAudioModeForPeriod(state.period)
-                        audioPlayer.playAmbient(currentMode)
+                    UnifiedStatus.RUNNING -> {
+                        updateNotification(state.title, state.formattedTime)
+                        audioPlayer.playAmbient(state.audioMode)
                     }
-                    PomodoroStatus.PAUSED -> {
-                        updateNotification("Paused", "Timer is paused")
+                    UnifiedStatus.PAUSED -> {
+                        updateNotification(state.title, getString(R.string.paused_state_text_label))
+                        audioPlayer.pause()
                     }
-                    PomodoroStatus.IDLE -> {
+                    UnifiedStatus.IDLE -> {
                         stopTracking()
                     }
                 }
@@ -78,11 +75,10 @@ class TimeTrackingService : Service() {
 
         effectsJob?.cancel()
         effectsJob = serviceScope.launch {
-            trackingManager.pomodoroEngine.effects.collect { effect ->
+            trackingManager.effects.collect { effect ->
                 when (effect) {
-                    is PomodoroEffect.PeriodFinished -> {
-                        val finishedMode = getAudioModeForPeriod(effect.completedPeriod)
-                        audioPlayer.playSessionBasicEndSound(finishedMode)
+                    is UnifiedEffect.SessionFinished -> {
+                        audioPlayer.playSessionBasicEndSound(effect.audioMode)
                     }
                 }
             }
@@ -107,13 +103,14 @@ class TimeTrackingService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(content)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // TODO: app icon
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .build()
     }
 
-    private fun updateNotification(title: String, content: String) {
+    private fun updateNotification(@StringRes titleRes: Int, content: String) {
+        val title = getString(titleRes)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, buildNotification(title, content))
     }
@@ -127,15 +124,6 @@ class TimeTrackingService : Service() {
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun getAudioModeForPeriod(period: PomodoroPeriod): AudioMode {
-        val config = trackingManager.pomodoroEngine.currentConfig
-        return when (period) {
-            is PomodoroPeriod.Work -> config.workAudioMode
-            is PomodoroPeriod.ShortBreak -> config.shortBreakAudioMode
-            is PomodoroPeriod.LongBreak -> config.longBreakAudioMode
         }
     }
 

@@ -9,5 +9,7 @@ sealed class Routes(val route: String) {
 
     object PlaySession : Routes("play_session")
 
+    object Stopwatch : Routes("stopwatch")
+
     object Statistics : Routes("statistics")
 }

@@ -48,6 +48,11 @@ fun MainMenuScreen(navController: NavController) {
                     .navigate(Routes.NewSession.route)
             }
 
+            StopwatchSessionButton {
+                navController
+                    .navigate(Routes.Stopwatch.route)
+            }
+
             StatisticsButton {
                 navController
                     .navigate(Routes.Statistics.route)
@@ -64,6 +69,16 @@ fun SelectSessionTextLabel() {
         fontSize = 24.sp,
         color = MaterialTheme.colorScheme.surfaceVariant
     )
+}
+
+@Composable
+fun StopwatchSessionButton(clicked : ()-> Unit) {
+    Button(onClick = clicked) {
+        Text(
+            text = stringResource(R.string.stopwatch_text_label),
+            fontFamily = FontFamily(Font(R.font.kurale_regular)),
+            fontSize = 24.sp)
+    }
 }
 
 @Composable

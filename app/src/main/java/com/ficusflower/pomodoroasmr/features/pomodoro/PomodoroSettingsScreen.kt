@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ficusflower.pomodoroasmr.R
 import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroConfig
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

@@ -5,9 +5,9 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.ficusflower.pomodoroasmr.MainDispatcherRule
 import com.ficusflower.pomodoroasmr.domain.repository.FakeSessionRepository
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroConfig
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngine
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroConfig
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroEngine
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroStatus
 import com.ficusflower.pomodoroasmr.infrastructure.audio.AudioPlayer
 import com.ficusflower.pomodoroasmr.infrastructure.service.TimeTrackingService
 import io.mockk.clearAllMocks
@@ -38,7 +38,7 @@ class TimerViewModelTest {
     private lateinit var pomodoroEngine: PomodoroEngine
     private val context: Context = mockk(relaxed = true)
     private val audioPlayer: AudioPlayer = mockk(relaxed = true)
-    private lateinit var viewModel: TimerViewModel
+    private lateinit var viewModel: PomodoroViewModel
     private lateinit var fakeRepository: FakeSessionRepository
 
     @Before
@@ -68,7 +68,7 @@ class TimerViewModelTest {
             Unit
         }
 
-        viewModel = TimerViewModel(
+        viewModel = PomodoroViewModel(
             pomodoroEngine = pomodoroEngine,
             context = context
         )

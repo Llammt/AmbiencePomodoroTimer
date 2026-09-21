@@ -1,5 +1,6 @@
-package com.ficusflower.pomodoroasmr.domain.timer
+package com.ficusflower.pomodoroasmr.domain.engines
 
+import com.ficusflower.pomodoroasmr.R
 import com.ficusflower.pomodoroasmr.domain.audio.AudioMode
 import com.ficusflower.pomodoroasmr.domain.model.Session
 import com.ficusflower.pomodoroasmr.domain.repository.SessionRepository
@@ -139,10 +140,10 @@ data class PomodoroEngineState(
 )
 
 enum class PomodoroStatus { IDLE, RUNNING, PAUSED }
-sealed class PomodoroPeriod(val durationMillis: Long, val label: String) {
-    class Work(duration: Long) : PomodoroPeriod(duration, "Work")
-    class ShortBreak(duration: Long) : PomodoroPeriod(duration, "Short Break")
-    class LongBreak(duration: Long) : PomodoroPeriod(duration, "Long Break")
+sealed class PomodoroPeriod(val durationMillis: Long, val label: Int) {
+    class Work(duration: Long) : PomodoroPeriod(duration, R.string.work_state_text_label)
+    class ShortBreak(duration: Long) : PomodoroPeriod(duration, R.string.short_break_state_text_label)
+    class LongBreak(duration: Long) : PomodoroPeriod(duration, R.string.long_break_state_text_label)
 }
 
 data class PomodoroConfig(

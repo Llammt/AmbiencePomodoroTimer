@@ -56,4 +56,7 @@
 
     <string name="weekly_activity_text_label">"Weekly Activity (min):"</string>
 
+    <string name="stopwatch_text_label">"Stopwatch"</string>
+    <string name="time_tracker_text_label">"Time Tracker"</string>
+
 </resources>

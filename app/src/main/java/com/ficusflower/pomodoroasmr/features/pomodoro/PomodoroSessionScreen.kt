@@ -19,16 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ficusflower.pomodoroasmr.R
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroEngineState
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroPeriod
-import com.ficusflower.pomodoroasmr.domain.timer.PomodoroStatus
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroEngineState
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroPeriod
+import com.ficusflower.pomodoroasmr.domain.engines.PomodoroStatus
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.runtime.collectAsState
 
 @Composable
 fun PomodoroSessionScreen(
     navController: NavController,
-    viewModel: TimerViewModel = koinViewModel()
+    viewModel: PomodoroViewModel = koinViewModel()
 
 ) {
     val timerState by viewModel.state.collectAsState()
@@ -160,7 +160,7 @@ fun PlaySessionImageFooter(modifier: Modifier = Modifier) {
 
 @Composable
 fun DurationSavingDialogue(
-    viewModel: TimerViewModel = koinViewModel()
+    viewModel: PomodoroViewModel = koinViewModel()
 ) {
     val showDialog by viewModel.showSaveDialog.collectAsState()
     val pendingTimeText by viewModel.pendingTimeFormatted.collectAsState()

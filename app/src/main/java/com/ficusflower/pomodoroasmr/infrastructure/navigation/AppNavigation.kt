@@ -4,19 +4,21 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ficusflower.pomodoroasmr.features.pomodoro.TimerViewModel
+import com.ficusflower.pomodoroasmr.features.pomodoro.PomodoroViewModel
 import com.ficusflower.pomodoroasmr.features.main.MainMenuScreen
 import com.ficusflower.pomodoroasmr.features.main.SplashScreen
 import com.ficusflower.pomodoroasmr.features.pomodoro.PomodoroSessionScreen
 import com.ficusflower.pomodoroasmr.features.pomodoro.PomodoroSettingsScreen
 import com.ficusflower.pomodoroasmr.features.statistics.StatsScreen
 import com.ficusflower.pomodoroasmr.features.statistics.StatsViewModel
+import com.ficusflower.pomodoroasmr.features.stopwatch.StopwatchScreen
+import com.ficusflower.pomodoroasmr.features.stopwatch.StopwatchViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val timerViewModel: TimerViewModel = koinViewModel()
+    val pomodoroViewModel: PomodoroViewModel = koinViewModel()
 
     NavHost(
         navController = navController,
@@ -39,7 +41,7 @@ fun AppNavigation() {
         composable(Routes.NewSession.route) {
             PomodoroSettingsScreen(
                 onStartSession = { config ->
-                    timerViewModel.startTimer(config)
+                    pomodoroViewModel.startTimer(config)
                     navController.navigate(Routes.PlaySession.route){
                         popUpTo(Routes.NewSession.route) { inclusive = true }
                     }
@@ -49,8 +51,13 @@ fun AppNavigation() {
 
 
         composable(Routes.PlaySession.route) {
-            val viewModel: TimerViewModel = koinViewModel()
+            val viewModel: PomodoroViewModel = koinViewModel()
             PomodoroSessionScreen(navController, viewModel)
+        }
+
+        composable(Routes.Stopwatch.route) {
+            val viewModel: StopwatchViewModel = koinViewModel()
+            StopwatchScreen(viewModel)
         }
 
         composable(Routes.Statistics.route) {
