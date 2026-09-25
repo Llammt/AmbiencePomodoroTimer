@@ -159,7 +159,7 @@ fun PlaySessionImageFooter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DurationSavingDialogue(
+private fun DurationSavingDialogue(
     viewModel: PomodoroViewModel = koinViewModel()
 ) {
     val showDialog by viewModel.showSaveDialog.collectAsState()

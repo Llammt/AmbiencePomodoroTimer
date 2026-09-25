@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.ficusflower.pomodoroasmr.domain.engines.AppMode
 import com.ficusflower.pomodoroasmr.domain.engines.StopwatchStatus
 import com.ficusflower.pomodoroasmr.domain.engines.TrackingManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class StopwatchViewModel(
@@ -16,19 +17,23 @@ class StopwatchViewModel(
 
     private val stopwatchEngine = trackingManager.stopwatchEngine
 
-    val uiState: StateFlow<StopwatchUiState> = stopwatchEngine.state
-        .map { engineState ->
-            StopwatchUiState(
-                status = engineState.status,
-                elapsedMillis = engineState.elapsedMillis,
-                formattedTime = formatMillisToTime(engineState.elapsedMillis)
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = StopwatchUiState()
+    private val _showSaveDialog = MutableStateFlow(false)
+
+    val uiState: StateFlow<StopwatchUiState> = combine(
+        stopwatchEngine.state,
+        _showSaveDialog
+    ) { engineState, showDialog ->
+        StopwatchUiState(
+            status = engineState.status,
+            elapsedMillis = engineState.elapsedMillis,
+            formattedTime = formatMillisToTime(engineState.elapsedMillis),
+            showSaveDialog = showDialog
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = StopwatchUiState()
+    )
 
     fun onStart() {
         trackingManager.setMode(AppMode.STOPWATCH)
@@ -39,8 +44,22 @@ class StopwatchViewModel(
         trackingManager.pauseCurrent()
     }
 
-    fun onStopAndSave() {
+    fun onStopClicked() {
+        _showSaveDialog.value = true
+    }
+
+    fun onConfirmSave() {
         trackingManager.stopCurrent()
+        _showSaveDialog.value = false
+    }
+
+    fun onDiscardSave() {
+        trackingManager.stopCurrent()
+        _showSaveDialog.value = false
+    }
+
+    fun onDismissDialog() {
+        _showSaveDialog.value = false
     }
 
     private fun formatMillisToTime(millis: Long): String {
@@ -60,5 +79,6 @@ class StopwatchViewModel(
 data class StopwatchUiState(
     val status: StopwatchStatus = StopwatchStatus.IDLE,
     val elapsedMillis: Long = 0L,
-    val formattedTime: String = "00:00"
+    val formattedTime: String = "00:00",
+    val showSaveDialog: Boolean = false
 )
